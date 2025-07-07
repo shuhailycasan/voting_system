@@ -24,6 +24,5 @@ Route::controller(VoteController::class)->group(function () {
     Route::get('/thankyou', function () {
         return view('thankyou');
     })->name('vote.thankyou');
-
 });
 
