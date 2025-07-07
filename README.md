@@ -34,6 +34,6 @@ A secure and offline-ready voting system built with **Laravel**, designed for lo
 │ └── seeders/
 
 
-##✍️ Credits
-###Made by Shuhaily Casan
-###Built with Laravel + Livewire
+## ✍️ Credits
+### Made by Shuhaily Casan
+### Built with Laravel + Livewire
