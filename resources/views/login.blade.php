@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 </head>
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] ">
+<body class="bg-[#FDFDFC] text-[#1b1b18] ">
 @include('components.top-nav')
 
 
@@ -38,7 +38,7 @@
             {{-- Hidden input to combine code --}}
             <input type="hidden" name="code" id="full-code"/>
 
-            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
+            <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white font-bold rounded hover:bg-emerald-700">
                 Submit Code
             </button>
 

@@ -13,16 +13,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 </head>
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] ">
+<body class="bg-[#FDFDFC] text-[#1b1b18] ">
 <div class="flex justify-center bg-emerald-700">
     <h1 class="text-lg text-center p-9 text-white font-bold">CAST YOUR VOTES</h1>
 </div>
-<div class="flex justify-center items-center h-auto border border-black">
+<div class="flex justify-center items-center h-auto">
     <div class="flex flex-col pb-2">
 
-        <h1 class="text-xl font-bold ">Pumili ng Kandidato</h2>
+        <h2 class="text-xl font-bold ">Pumili ng Kandidato</h2>
 
-            <form action="{{ route('vote.submit') }}" method="POST">
+            <form id="voteForm" action="{{ route('vote.submit') }}" method="POST">
                 @csrf
 
                 <div class="p-3 m-3 bg-color shadow">
@@ -100,7 +100,7 @@
 
             <!-- Confirmation Modal -->
             <div id="confirmationModal"
-                 class="fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50">
+                 class="hidden fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50">
                 <div class="bg-white rounded-lg p-6 w-100 max-w-md">
                     <h2 class="text-lg font-bold mb-4">Kumpirmado na ba ang iyong boto?</h2>
                     <ul id="voteSummaryList" class="mb-4 text-sm space-y-2 text-gray-700">

@@ -17,29 +17,46 @@ class VoteController extends Controller
 
     public function submitVote(Request $request)
     {
-        $request->validate([
-            'candidate_id' => 'required|exists:candidates,id',
-        ]);
+        $votes = $request->input('votes'); // this is an associative array like ['President' => 2]
 
         $user = Auth::user();
 
-        // prevent double voting just in case
         if ($user->voted) {
             return redirect()->route('already-voted');
         }
 
-        // store the vote
-        Vote::create([
-            'user_id' => $user->id,
-            'candidate_id' => $request->candidate_id,
-        ]);
 
-        // mark user as voted
+
+        foreach ($votes as $position => $candidateIdOrArray) {
+
+            // 🔍 Check if this position allows multiple votes
+            if (is_array($candidateIdOrArray)) {
+                foreach ($candidateIdOrArray as $candidateId) {
+                    $candidate = Candidate::findOrFail($candidateId);
+
+                    Vote::create([
+                        'user_id' => $user->id,
+                        'candidate_id' => $candidate->id,
+                        'position' => $position,
+                    ]);
+                }
+            } else {
+                $candidate = Candidate::findOrFail($candidateIdOrArray);
+
+                Vote::create([
+                    'user_id' => $user->id,
+                    'candidate_id' => $candidate->id,
+                    'position' => $position,
+                ]);
+            }
+        }
+
         $user->voted = true;
         $user->save();
 
         Auth::logout();
 
         return redirect()->route('vote.thankyou');
+
     }
 }
