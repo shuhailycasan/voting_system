@@ -21,3 +21,13 @@
     }, 3000);
 
 </script>
+
+
+User::create([
+'name' => 'Admin Name',
+'email' => 'admin@voting.com',
+'password' => Hash::make('adminadmin'),
+'role' => 'admin',
+'code' => null,
+'voted' => false,
+]);

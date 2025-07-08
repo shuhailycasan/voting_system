@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VoteController;
+use App\Http\Controllers\VoteLoginController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,20 +17,26 @@ Route::controller(VoteController::class)->middleware('auth')->group(function () 
     Route::get('/vote', 'showVotePage')->name('vote.page');
     Route::post('/vote-submit', 'submitVote')->name('vote.submit');
 
-    Route::get('/thankyou', function () {
-        return view('thankyou');
-    })->name('vote.thankyou');
-
-    Route::get('/already-voted', function () {
-        return view('already-voted');
-    })->name('already-voted');
 });
+
+Route::get('/thank-you', function () {
+    return view('thankyou');
+})->name('vote.thankyou');
+
+
+Route::get('/already-voted', function () {
+    return view('already-voted');
+})->name('already-voted');
+
 
 
 //ADMIN ROUTES
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::controller(AdminLoginController::class)->group(function () {
+    Route::get('/admin/login', 'showLoginForm')->name('admin.login');
+    Route::post('/admin/login', 'login')->name('admin.login.submit');
+});
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
