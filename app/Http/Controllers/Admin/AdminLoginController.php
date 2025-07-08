@@ -31,9 +31,13 @@ class AdminLoginController extends Controller
         return redirect()->route('admin.dashboard');
     }
 
-    public function logout(){
+    public function logout(Request $request){
+
         Auth:$this->logout();
-        return redirect()->route('admin.logout');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login');
     }
 }
 
