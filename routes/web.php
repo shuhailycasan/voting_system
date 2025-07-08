@@ -3,10 +3,28 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+
+//VOTERS ROUTES
+Route::controller(VoteLoginController::class)->group(function () {
+    Route::get('/', 'showLoginForm')->name('login.form');
+    Route::post('/login-code', 'login')->name('vote.code.login');
 });
 
+Route::controller(VoteController::class)->middleware('auth')->group(function () {
+    Route::get('/vote', 'showVotePage')->name('vote.page');
+    Route::post('/vote-submit', 'submitVote')->name('vote.submit');
+
+    Route::get('/thankyou', function () {
+        return view('thankyou');
+    })->name('vote.thankyou');
+
+    Route::get('/already-voted', function () {
+        return view('already-voted');
+    })->name('already-voted');
+});
+
+
+//ADMIN ROUTES
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
