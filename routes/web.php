@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoteController;
@@ -35,6 +36,17 @@ Route::controller(AdminLoginController::class)->group(function () {
     Route::get('/admin/login', 'showLoginForm')->name('admin.login');
     Route::post('/admin/login', 'login')->name('admin.login.submit');
 });
+
+Route::get('/admin/dashboard', function () {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Unauthorized');
+    }
+    return view('Admin.dashboard');
+})->middleware('auth')->name('admin.dashboard');
+
+
+// Admin Logout
+Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
 
 

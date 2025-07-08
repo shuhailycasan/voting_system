@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Document</title>
+    <title>ADMIN LOGIN</title>
 </head>
 <body>
 
 <div class="flex justify-center items-center min-h-screen border border-emerald-400">
-
-
     <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">For Admin Only</h2>
@@ -20,7 +18,8 @@
             @if (session('error'))
                 <p class="text-red-600">{{ session('error') }}</p>
             @endif
-            <form action="{{ route('admin.login.submit') }}" class="space-y-6" action="#" method="POST">
+            <form action="{{ route('admin.login.submit') }}" class="space-y-6" method="POST">
+                @csrf
                 <div>
                     <label for="name" class="block text-sm/6 font-medium text-gray-900">Admin Name</label>
                     <div class="mt-2">
