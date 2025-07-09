@@ -2,11 +2,11 @@
 
 
 @section('content')
-    <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+    <div class="p-4 flex justify-center border border-emerald-400 sm:ml-64 min-h-screen">
+        <div class="w-full max-w-4xl p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
             <div class="  mb-4 rounded-sm bg-gray-50 dark:bg-gray-800 p-4">
 
-                <div class="flex justify-between items-center pb-2">
+                <div class="flex flex-col lg:flex justify-between items-center pb-2">
                     <div class="text-center font-bold text-2xl flex justify-center">
                         <h1>List of All Candidates</h1>
                     </div>
@@ -70,9 +70,8 @@
                         </div>
                     @endif
 
-                    <form action="#" method="POST">
+                    <form action="{{ route('admin.candidate.add') }}" method="POST">
                         @csrf
-
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name</label>
                             <input type="text" id="name" name="name" required
@@ -102,7 +101,7 @@
                         </div>
                     @endif
 
-                    <form action="#" method="POST">
+                    <form action="{{ route('admin.candidate.delete', $candidateAll->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
 
@@ -121,6 +120,7 @@
                             Delete Candidate
                         </button>
                     </form>
+
                 </div>
             </div>
     </div>

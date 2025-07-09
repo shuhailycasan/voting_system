@@ -30,7 +30,10 @@
 
             <div class="flex  mb-4 space-x-2 rtl:space-x-reverse">
                 @for ($i = 1; $i <= 6; $i++)
-                    <input type="text" maxlength="1" id="code-{{ $i }}"
+                    <input type="tel"
+                           inputmode="numeric"
+                           pattern="[0-9]"
+                           maxlength="1" id="code-{{ $i }}"
                            class="block w-full  py-3 text-sm font-extrabold text-center text-gray-900 bg-white
                            border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                            required/>
@@ -54,25 +57,52 @@
 </html>
 
 <script>
-    const inputs = [...document.querySelectorAll('input[type="text"][id^=code-]')];
-    const hiddenInput = document.getElementById('full-code');
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input[id^="code-"]');
 
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', () => {
-            // Go to next input
-            if (input.value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
+        inputs.forEach((input, index) => {
+            input.setAttribute('inputmode', 'numeric');
+            input.setAttribute('maxlength', '1');
+            input.setAttribute('pattern', '[0-9]*');
 
-            // Update hidden input
-            const code = inputs.map(i => i.value).join('');
-            hiddenInput.value = code;
-        });
+            input.addEventListener("input", function (e) {
+                const value = e.target.value;
 
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && input.value === '' && index > 0) {
-                inputs[index - 1].focus();
-            }
+                // Allow only numbers
+                if (!/^\d$/.test(value)) {
+                    e.target.value = ''; // Clear invalid input
+                    return;
+                }
+
+                // Move to next input if value is valid
+                const nextInput = inputs[index + 1];
+                if (value && nextInput) {
+                    nextInput.focus();
+                }
+
+                // Auto-submit when all boxes filled (optional)
+                if (index === inputs.length - 1) {
+                    let allFilled = true;
+                    inputs.forEach(i => {
+                        if (i.value === "") allFilled = false;
+                    });
+
+                    if (allFilled) {
+                        // Combine into hidden input
+                        const fullCode = Array.from(inputs).map(i => i.value).join('');
+                        document.getElementById("full-code").value = fullCode;
+                        document.getElementById("voteForm").submit();
+                    }
+                }
+            });
+
+            // Backspace to previous input
+            input.addEventListener("keydown", function (e) {
+                if (e.key === "Backspace" && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
         });
     });
 </script>
+

@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
-    public function ManageCandidates(Request $request){
+    public function ManageCandidates(Request $request)
+    {
 
         $search = $request->input('search');
 
@@ -29,7 +30,30 @@ class AdminDashboardController extends Controller
         return view('Admin.features.candidate-manage', compact('candidates','candidatesAll', 'totalVoters', 'votedCount','search'));
     }
 
-    public function showDashboard(){
+    public function addCandidates(Request $request)
+    {
+        $add_candidates = $request->validate([
+            'name' => 'required',
+            'position' => 'required',
+        ]);
+
+        Candidate::create($add_candidates);
+
+        return redirect()
+            ->route('admin.candidate.table')
+            ->with('success', 'Candidate added successfully!');
+    }
+
+    public function deleteCandidates($id){
+        $delCandidate = Candidate::findOrFail($id);
+        $delCandidate->delete();
+
+        return redirect()->route('admin.candidate.table')
+            ->with('deleted', 'Candidate deleted successfully!');
+    }
+
+    public function showDashboard()
+    {
         $candidates = Candidate::withCount('votes')->get();
 
         $labels = $candidates->pluck('name');

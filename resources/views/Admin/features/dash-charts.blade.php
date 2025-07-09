@@ -3,6 +3,7 @@
 
 @section('content')
     <div class="p-4 sm:ml-64">
+        <h1 class="text-2xl font-bold text-center m-2">Candidates Chart</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach ($groupedCandidates as $position => $candidates)
                 <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
