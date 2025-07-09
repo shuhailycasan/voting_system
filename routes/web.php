@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\VoteLoginController;
+use App\Models\Candidate;
 use Illuminate\Support\Facades\Route;
 
 
@@ -40,8 +41,15 @@ Route::get('/admin/dashboard', function () {
     if (!auth()->check() || auth()->user()->role !== 'admin') {
         abort(403, 'Unauthorized');
     }
-    return view('Admin.features.dash-charts');
+
+    $candidates = Candidate::withCount('votes')->get();
+
+    $groupedCandidates = $candidates->groupBy('position');
+
+
+    return view('Admin.features.dash-charts', compact('groupedCandidates'));
 })->middleware('auth')->name('admin.dashboard');
+
 
 
 // Admin Logout
