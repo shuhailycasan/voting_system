@@ -27,11 +27,15 @@ class AdminDashboardController extends Controller
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
         return view('Admin.features.candidate-manage', compact('candidates','candidatesAll', 'totalVoters', 'votedCount','search'));
-
     }
 
-    public function showCandidatePage(){
-       return view('Admin.features.candidate-manage');
+    public function showDashboard(){
+        $candidates = Candidate::withCount('votes')->get();
+
+        $labels = $candidates->pluck('name');
+        $data = $candidates->pluck('candidate_id');
+
+        return view('Admin.features.dash-charts', compact('labels', 'data'));
     }
 
 

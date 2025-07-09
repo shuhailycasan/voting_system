@@ -40,7 +40,7 @@ Route::get('/admin/dashboard', function () {
     if (!auth()->check() || auth()->user()->role !== 'admin') {
         abort(403, 'Unauthorized');
     }
-    return view('Admin.dashboard');
+    return view('Admin.features.dash-charts');
 })->middleware('auth')->name('admin.dashboard');
 
 
@@ -57,8 +57,6 @@ Route::middleware('auth')->group(function () {
 
 Route::controller(AdminDashboardController::class)->group(function () {
     Route::get('/admin/candidate-manage', 'ManageCandidates')->name('admin.candidate.table');
-
-    Route::get('/admin/candidates', 'showCandidatePage')->name('admin.candidate.manage');
 
 })->middleware('auth');
 
