@@ -17,7 +17,6 @@ Route::controller(VoteLoginController::class)->group(function () {
 Route::controller(VoteController::class)->middleware('auth')->group(function () {
     Route::get('/vote', 'showVotePage')->name('vote.page');
     Route::post('/vote-submit', 'submitVote')->name('vote.submit');
-
 });
 
 Route::get('/thank-you', function () {
@@ -49,11 +48,18 @@ Route::get('/admin/dashboard', function () {
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
 
-
+//Profile Editing
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::controller(AdminDashboardController::class)->group(function () {
+    Route::get('/admin/candidate-manage', 'ManageCandidates')->name('admin.candidate.table');
+
+    Route::get('/admin/candidates', 'showCandidatePage')->name('admin.candidate.manage');
+
+})->middleware('auth');
 
 require __DIR__.'/auth.php';

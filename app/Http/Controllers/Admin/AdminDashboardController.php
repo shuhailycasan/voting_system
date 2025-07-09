@@ -9,7 +9,16 @@ use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
-    public function index(){
+    public function ManageCandidates(Request $request){
+
+        $search = $request->input('search');
+
+        $candidatesAll = Candidate::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('position', 'like', '%' . $search . '%');
+        })->paginate(5);
+
         //Example: get total votes per candidate
         $candidates = Candidate::withCount('votes')->get();
 
@@ -17,7 +26,12 @@ class AdminDashboardController extends Controller
         $totalVoters = User::where('role', 'voter')->count();
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
-        return view('Admin.dashboard', compact('candidates', 'totalVoters', 'votedCount'));
+        return view('Admin.features.candidate-manage', compact('candidates','candidatesAll', 'totalVoters', 'votedCount','search'));
+
+    }
+
+    public function showCandidatePage(){
+       return view('Admin.features.candidate-manage');
     }
 
 

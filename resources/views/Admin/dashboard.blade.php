@@ -7,7 +7,14 @@
     <title>DASHBOARD</title>
 </head>
 <body>
-@include('Admin/sidebar');
+
+<div class="flex min-h-screen">
+    @include('Admin/sidebar');
+
+    <div class="flex-1 p-6 ">
+        @yield('content')
+    </div>
+</div>
 
 
 </body>

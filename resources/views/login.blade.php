@@ -14,6 +14,7 @@
 
 </head>
 <body class="bg-[#FDFDFC] text-[#1b1b18] ">
+
 @include('components.top-nav')
 
 
@@ -30,7 +31,8 @@
             <div class="flex  mb-4 space-x-2 rtl:space-x-reverse">
                 @for ($i = 1; $i <= 6; $i++)
                     <input type="text" maxlength="1" id="code-{{ $i }}"
-                           class="block w-full  py-3 text-sm font-extrabold text-center text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                           class="block w-full  py-3 text-sm font-extrabold text-center text-gray-900 bg-white
+                           border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                            required/>
                 @endfor
             </div>
@@ -38,7 +40,8 @@
             {{-- Hidden input to combine code --}}
             <input type="hidden" name="code" id="full-code"/>
 
-            <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white font-bold rounded hover:bg-emerald-700">
+            <button type="submit"
+                    class="w-full px-4 py-2 bg-emerald-600 text-white font-bold rounded hover:bg-emerald-700">
                 Submit Code
             </button>
 
