@@ -49,6 +49,20 @@ class VoteController extends Controller
             }
         }
 
+        return redirect()->route('vote.photo.upload');
+
+    }
+
+    public function storePhoto(Request $request)
+    {
+        $request->validate([
+           'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        $user->addMediaFromRequest('photo')->toMediaCollection('vote_photo');
+
         $user->voted = true;
         $user->voted_at = now();
         $user->save();
@@ -56,6 +70,6 @@ class VoteController extends Controller
         Auth::logout();
 
         return redirect()->route('vote.thankyou');
-
     }
+
 }

@@ -18,6 +18,9 @@ Route::controller(VoteLoginController::class)->group(function () {
 Route::controller(VoteController::class)->middleware('auth')->group(function () {
     Route::get('/vote', 'showVotePage')->name('vote.page');
     Route::post('/vote-submit', 'submitVote')->name('vote.submit');
+
+    Route::post('/vote/photo', [VoteController::class, 'storePhoto'])->name('vote.photo.upload');
+
 });
 
 Route::get('/thank-you', function () {
@@ -70,6 +73,7 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::post('/admin/add-candidate', 'addCandidates')->name('admin.candidate.add');
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
+
 
 
 
