@@ -19,15 +19,25 @@ Route::controller(VoteController::class)->middleware('auth')->group(function () 
     Route::get('/vote', 'showVotePage')->name('vote.page');
     Route::post('/vote-submit', 'submitVote')->name('vote.submit');
 
-    Route::post('/vote/photo', [VoteController::class, 'storePhoto'])->name('vote.photo.upload');
-
 });
 
+//voters taking picture after voting
+Route::get('/vote/photo', function () {
+    if (!auth()->check() || auth()->user()->voted) {
+        return redirect()->route('login');
+    }
+
+    return view('web-cam');
+})->name('vote.photo');
+
+Route::post('/vote/photo', [VoteController::class, 'storePhoto'])->name('vote.photo.upload');
+
+//Thank you page
 Route::get('/thank-you', function () {
     return view('thankyou');
 })->name('vote.thankyou');
 
-
+//Already Voted page
 Route::get('/already-voted', function () {
     return view('already-voted');
 })->name('already-voted');
@@ -73,9 +83,6 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::post('/admin/add-candidate', 'addCandidates')->name('admin.candidate.add');
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
-
-
-
 
 })->middleware('auth');
 

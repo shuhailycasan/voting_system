@@ -49,27 +49,31 @@ class VoteController extends Controller
             }
         }
 
-        return redirect()->route('vote.photo.upload');
+        return redirect()->route('vote.photo');
 
     }
 
     public function storePhoto(Request $request)
     {
         $request->validate([
-           'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'required|image|max:2048',
         ]);
 
         $user = Auth::user();
 
-        $user->addMediaFromRequest('photo')->toMediaCollection('vote_photo');
-
-        $user->voted = true;
-        $user->voted_at = now();
-        $user->save();
+        try {
+            $user->addMediaFromRequest('photo')->toMediaCollection('vote_photo');
+            $user->voted = true;
+            $user->voted_at = now();
+            $user->save();
+        } catch (\Exception $e) {
+            logger()->error('Photo upload failed', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Photo upload failed'], 500);
+        }
 
         Auth::logout();
 
-        return redirect()->route('vote.thankyou');
+        return response()->json(['redirect' => route('vote.thankyou')]);
     }
 
 }
