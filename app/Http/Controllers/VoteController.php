@@ -25,11 +25,9 @@ class VoteController extends Controller
             return redirect()->route('already-voted');
         }
 
-
-
         foreach ($votes as $position => $candidateIdOrArray) {
 
-            // 🔍 Check if this position allows multiple votes
+            //  Check if this position allows multiple votes
             if (is_array($candidateIdOrArray)) {
                 foreach ($candidateIdOrArray as $candidateId) {
                     $candidate = Candidate::findOrFail($candidateId);
@@ -52,6 +50,7 @@ class VoteController extends Controller
         }
 
         $user->voted = true;
+        $user->voted_at = now();
         $user->save();
 
         Auth::logout();

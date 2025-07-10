@@ -46,6 +46,7 @@ class AdminDashboardController extends Controller
 
     public function deleteCandidates($id){
         $delCandidate = Candidate::findOrFail($id);
+
         $delCandidate->delete();
 
         return redirect()->route('admin.candidate.table')
@@ -62,6 +63,21 @@ class AdminDashboardController extends Controller
         return view('Admin.features.dash-charts', compact('labels', 'data'));
     }
 
+
+        public function ManageUsers(Request $request)
+    {
+
+        $search = $request->input('search');
+
+        $usersAll = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where('code', 'like', '%' . $search . '%')
+                    ->orWhere('role', 'like', '%' . $search . '%');
+            })->paginate(5);
+
+
+        return view('Admin.features.users-manage', compact('usersAll','search'));
+    }
 
 
 }

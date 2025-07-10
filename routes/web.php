@@ -66,8 +66,12 @@ Route::middleware('auth')->group(function () {
 Route::controller(AdminDashboardController::class)->group(function () {
     Route::get('/admin/candidate-manage', 'ManageCandidates')->name('admin.candidate.table');
 
+    Route::get('/admin/users-manage', 'ManageUsers')->name('admin.candidate.users');
+
     Route::post('/admin/add-candidate', 'addCandidates')->name('admin.candidate.add');
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
+
+
 
 })->middleware('auth');
 
