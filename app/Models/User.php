@@ -44,6 +44,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Vote::class);
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('vote_photo')->singleFile();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

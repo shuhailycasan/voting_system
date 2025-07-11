@@ -79,6 +79,5 @@ class AdminDashboardController extends Controller
         return view('Admin.features.users-manage', compact('usersAll','search'));
     }
 
-
 }
 

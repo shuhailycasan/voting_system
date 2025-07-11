@@ -66,7 +66,7 @@
                     return res.text(); // or res.json() if your controller returns JSON
                 })
                 .then(() => {
-                    window.location.href = '/thankyou';
+                    window.location.href = '/thank-you';
                 })
                 .catch(err => {
                     console.error("Upload error:", err);

@@ -55,25 +55,30 @@ class VoteController extends Controller
 
     public function storePhoto(Request $request)
     {
-        $request->validate([
-            'photo' => 'required|image|max:2048',
-        ]);
-
-        $user = Auth::user();
-
         try {
+            $request->validate([
+                'photo' => 'required|image|max:2048',
+            ]);
+
+            $user = Auth::user();
+
+            if (!$user) {
+                Log::error('No authenticated user found during photo upload.');
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
             $user->addMediaFromRequest('photo')->toMediaCollection('vote_photo');
+
             $user->voted = true;
             $user->voted_at = now();
             $user->save();
+
+            Auth::logout();
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            logger()->error('Photo upload failed', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Photo upload failed'], 500);
+            Log::error('Photo upload failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Upload failed'], 500);
         }
-
-        Auth::logout();
-
-        return response()->json(['redirect' => route('vote.thankyou')]);
     }
-
 }
