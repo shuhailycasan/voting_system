@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
+use App\Imports\VoterCodeImport;
 use App\Models\Candidate;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -92,12 +93,20 @@ class AdminDashboardController extends Controller
 
     public function showRankings()
     {
-        $candidateRank = Candidate::withCount('votes')
-        ->orderBy('position')
-        ->orderByDesc('votes_count')
-        ->get();
+        $candidates = Candidate::withCount('votes')
+            ->orderBy('position')
+            ->orderByDesc('votes_count')
+            ->get();
 
-        $groupedRankings = $candidateRank->groupBy('position');
+        $grouped = $candidates->groupBy('position');
+
+        // Define your preferred order
+        $positionOrder = ['President', 'Vice-President', 'Secretary', 'business_manager'];
+
+        // Reorder grouped collection
+        $groupedRankings = collect($positionOrder)->mapWithKeys(function ($position) use ($grouped) {
+            return [$position => $grouped->get($position, collect())];
+        });
 
         return view('Admin.features.rankings', compact('groupedRankings'));
     }
@@ -105,6 +114,17 @@ class AdminDashboardController extends Controller
     public function exportUsers()
     {
         return Excel::download(new UsersExport, 'users.xlsx');
+    }
+
+    public function importVoters(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,xlsx'
+        ]);
+
+        Excel::import(new VoterCodeImport, $request->file('voters_file'));
+
+        return redirect()->back()->with('success', 'Voters codes imported successfully!');
     }
 
 }
