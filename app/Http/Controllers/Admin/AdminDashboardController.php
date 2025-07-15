@@ -90,6 +90,18 @@ class AdminDashboardController extends Controller
 
     }
 
+    public function showRankings()
+    {
+        $candidateRank = Candidate::withCount('votes')
+        ->orderBy('position')
+        ->orderByDesc('votes_count')
+        ->get();
+
+        $groupedRankings = $candidateRank->groupBy('position');
+
+        return view('Admin.features.rankings', compact('groupedRankings'));
+    }
+
     public function exportUsers()
     {
         return Excel::download(new UsersExport, 'users.xlsx');

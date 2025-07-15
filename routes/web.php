@@ -79,6 +79,8 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');
 
+    Route::get('/admin/rankings', 'showRankings')->name('admin.show.rankings');
+
 })->middleware('auth');
 
 
