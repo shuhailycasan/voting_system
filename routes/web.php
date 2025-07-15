@@ -50,18 +50,8 @@ Route::controller(AdminLoginController::class)->group(function () {
     Route::post('/admin/login', 'login')->name('admin.login.submit');
 });
 
-Route::get('/admin/dashboard', function () {
-    if (!auth()->check() || auth()->user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-
-    $candidates = Candidate::withCount('votes')->get();
-
-    $groupedCandidates = $candidates->groupBy('position');
-
-
-    return view('Admin.features.dash-charts', compact('groupedCandidates'));
-})->middleware('auth')->name('admin.dashboard');
+Route::get('/admin/dashboard', [AdminDashboardController::class, 'showDashboard'])
+    ->middleware('auth')->name('admin.dashboard');
 
 
 
@@ -82,6 +72,7 @@ Route::controller(AdminDashboardController::class)->group(function () {
     Route::get('/admin/users-manage', 'ManageUsers')->name('admin.candidate.users');
 
     Route::post('/admin/add-candidate', 'addCandidates')->name('admin.candidate.add');
+
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
 
 })->middleware('auth');

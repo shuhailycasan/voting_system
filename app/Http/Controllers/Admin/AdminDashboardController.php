@@ -20,14 +20,9 @@ class AdminDashboardController extends Controller
                     ->orWhere('position', 'like', '%' . $search . '%');
         })->paginate(5);
 
-        //Example: get total votes per candidate
-        $candidates = Candidate::withCount('votes')->get();
 
-        // Example: count voters who already voted
-        $totalVoters = User::where('role', 'voter')->count();
-        $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
-        return view('Admin.features.candidate-manage', compact('candidates','candidatesAll', 'totalVoters', 'votedCount','search'));
+        return view('Admin.features.candidate-manage', compact('candidatesAll', 'search'));
     }
 
     public function addCandidates(Request $request)
@@ -60,14 +55,26 @@ class AdminDashboardController extends Controller
         $labels = $candidates->pluck('name');
         $data = $candidates->pluck('candidate_id');
 
-        return view('Admin.features.dash-charts', compact('labels', 'data'));
+        // Example: count voters who already voted
+        $totalVoters = User::where('role', 'voter')->count();
+        $votedCount = User::where('role', 'voter')->where('voted', true)->count();
+
+        $candidates = Candidate::withCount('votes')->get();
+
+        $notVotedUsers = $totalVoters - $votedCount;
+
+        $groupedCandidates = $candidates->groupBy('position');
+
+
+        return view('Admin.features.dash-charts', compact('labels', 'data','totalVoters', 'votedCount', 'candidates','groupedCandidates','notVotedUsers'));
+
     }
 
 
         public function ManageUsers(Request $request)
     {
 
-        $search = $request->input('search');
+        $search = $request->input('search_users');
 
         $usersAll = User::query()
             ->when($search, function ($query, $search) {
@@ -77,6 +84,7 @@ class AdminDashboardController extends Controller
 
 
         return view('Admin.features.users-manage', compact('usersAll','search'));
+
     }
 
 }
