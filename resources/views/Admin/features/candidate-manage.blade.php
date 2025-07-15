@@ -2,30 +2,36 @@
 
 
 @section('content')
-    <div class="">
+    <div class=" border border-emerald-400 sm:ml-64 min-h-screen">
         <div class="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-            <div class="mb-4 rounded-sm bg-gray-50 dark:bg-gray-800 p-4">
-                <div class="flex flex-col lg:flex justify-between items-center pb-2">
-                    <div class="text-center font-bold text-2xl flex justify-center">
-                        <h1>List of All Candidates</h1>
-                    </div>
 
-                    <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex">
-                        @csrf
-                        <input type="text" name="search" value="{{ request('search') }}"
-                               placeholder="Search name or position..."
-                               class="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2
+            <div class="text-center font-bold text-2xl flex justify-center">
+                <h1>List of All Candidates</h1>
+            </div>
+
+            <div class="flex justify-between items-center w-xl mb-2 border border-emerald-400">
+
+                <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex">
+                    @csrf
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           placeholder="Search name or position..."
+                           class="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2
                                focus:ring-emerald-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"/>
 
 
-                        <button type="submit"
-                                class="bg-emerald-600 text-white px-4 rounded-r-md hover:bg-emerald-700">
-                            Search
-                        </button>
-                    </form>
-                </div>
+                    <button type="submit"
+                            class="bg-emerald-600 text-white px-4 rounded-r-md hover:bg-emerald-700">
+                        Search
+                    </button>
+                </form>
+                <a href="{{ route('admin.export.voters') }}"
+                   class="inline-flex items-center justify-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium py-2 px-4 rounded transition">
+                    Export to Excel
+                </a>
+            </div>
 
-                <div class="overflow-x-auto">
+            <div class="overflow-x-auto">
+                <div class="inline-block min-w-full align-middle">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                         <tr class="text-center">
@@ -57,6 +63,7 @@
                     </div>
                 </div>
             </div>
+
 
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 {{-- Add Candidate --}}

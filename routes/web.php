@@ -7,6 +7,8 @@ use App\Http\Controllers\VoteController;
 use App\Http\Controllers\VoteLoginController;
 use App\Models\Candidate;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 
 //VOTERS ROUTES
@@ -75,6 +77,12 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
 
+    Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');
+
 })->middleware('auth');
+
+
+
+
 
 require __DIR__.'/auth.php';

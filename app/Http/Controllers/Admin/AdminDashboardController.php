@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Models\Candidate;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class AdminDashboardController extends Controller
 {
@@ -85,6 +88,11 @@ class AdminDashboardController extends Controller
 
         return view('Admin.features.users-manage', compact('usersAll','search'));
 
+    }
+
+    public function exportUsers()
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 
 }
