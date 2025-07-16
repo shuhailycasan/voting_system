@@ -15,7 +15,7 @@
                 @click="isSidebarOpen = false"
                 class="fixed inset-0 z-10 backdrop-blur-sm  lg:hidden"
             ></div>
-            <div x-show="isSidebarOpen" class="fixed inset-y-0 z-10 w-16 bg-white"></div>
+            <div x-show="isSidebarOpen" class="fixed inset-y-0 z-10 w-16 bg-white lg:hidden"></div>
 
             <!-- Mobile bottom bar -->
             <nav
@@ -86,9 +86,10 @@
             <!-- Left mini bar -->
             <nav
                 aria-label="Options"
-                class="z-20 flex-col items-center flex-shrink-0 hidden w-16 py-4 bg-white border-r-2 border-emerald-100 shadow-md sm:flex rounded-tr-3xl rounded-br-3xl"
+                class="z-20 flex-col items-center flex-shrink-0 hidden w-16 py-4 bg-white border-r-2 border-emerald-100 shadow-md md:flex rounded-tr-3xl rounded-br-3xl"
             >
-                <!-- Logo -->
+
+            <!-- Logo -->
                 <div class="flex-shrink-0 py-4">
                     <a href="#">
                         <img

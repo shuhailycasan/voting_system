@@ -15,14 +15,33 @@
                         @forelse ($candidates as $candidate)
                             @php
                                 $rank = $loop->index;
-                                $colors = ['bg-yellow-300', 'bg-gray-300', 'bg-orange-300'];
-                                $bg = $colors[$rank] ?? 'bg-white';
+                                $colors = ['bg-yellow-300', 'bg-gray-300', 'bg-orange-300']; // 1st, 2nd, 3rd
+                                $bg = $colors[$rank] ?? 'bg-gray-100 dark:bg-gray-700';
                             @endphp
 
-                            <div class="shadow p-4 rounded {{ $bg }}">
-                                <h3 class="text-lg font-bold">{{ $candidate->name }}</h3>
-                                <p class="text-sm text-gray-700">Votes: {{ $candidate->votes_count }}</p>
-                            </div>
+                            <li class="flex items-center space-x-4 p-4 rounded {{ $bg }}">
+                                {{-- Profile Picture --}}
+                                <div class="flex-shrink-0">
+                                    @if ($candidate->hasMedia('candidate_photo'))
+                                        <img src="{{ $candidate->getFirstMediaUrl('candidate_photo') }}"
+                                             alt="{{ $candidate->name }}"
+                                             class="w-12 h-12 rounded-full object-cover border-2 border-white shadow" />
+                                    @else
+                                        <div
+                                            class="w-12 h-12 rounded-full bg-gray-300 text-white flex items-center justify-center text-sm font-bold">
+                                            ?
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- Candidate Info --}}
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                                        {{ $candidate->name }}
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Votes: {{ $candidate->votes_count }}</p>
+                                </div>
+                            </li>
                         @empty
                             <li class="text-gray-400 text-sm text-center">No candidates</li>
                         @endforelse
@@ -31,4 +50,5 @@
             @endforeach
         </div>
     </div>
+
 @endsection
