@@ -30,8 +30,7 @@ class User extends Authenticatable implements HasMedia
     protected $fillable = [
         'code',
         'role',
-        'voted',
-        'name',
+        'voted'
     ];
 
     /**
