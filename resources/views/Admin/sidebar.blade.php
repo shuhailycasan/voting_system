@@ -77,6 +77,8 @@
                     >
                         <a href="{{ route('admin.logout') }}"
                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
+                        <a href="{{ route('admin.logout') }}"
+                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">User Logs</a>
                     </div>
                 </div>
             </nav>
@@ -149,6 +151,7 @@
                                     class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 Sign out
                             </button>
+                            <a href="{{ route('admin.logs') }}" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">User Logs</a>
                         </form>
                     </div>
                 </div>

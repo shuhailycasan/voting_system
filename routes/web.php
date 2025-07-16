@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\VoteLoginController;
@@ -88,6 +89,7 @@ Route::controller(AdminDashboardController::class)->group(function () {
 })->middleware('auth');
 
 
+Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs')->middleware('auth');
 
 
 

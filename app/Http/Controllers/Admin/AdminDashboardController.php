@@ -9,6 +9,7 @@ use App\Models\Candidate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Activitylog\Models\Activity;
 
 
 class AdminDashboardController extends Controller
@@ -78,6 +79,13 @@ class AdminDashboardController extends Controller
 
     public function deleteCandidates($id){
         $delCandidate = Candidate::findOrFail($id);
+
+        // Log the delete activity BEFORE deleting
+        activity()
+            ->causedBy(auth()->user()) // who did it
+            ->performedOn($delCandidate) // what was affected
+            ->withProperties(['candidate_name' => $delCandidate->name, 'position' => $delCandidate->position])
+            ->log("Deleted candidate {$delCandidate->name}");
 
         $delCandidate->delete();
 
