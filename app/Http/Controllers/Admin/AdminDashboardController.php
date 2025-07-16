@@ -98,12 +98,15 @@ class AdminDashboardController extends Controller
 
         $candidates = Candidate::withCount('votes')->get();
 
+        $totalCandidates = Candidate::count();
+
+
         $notVotedUsers = $totalVoters - $votedCount;
 
         $groupedCandidates = $candidates->groupBy('position');
 
 
-        return view('Admin.features.dash-charts', compact('labels', 'data','totalVoters', 'votedCount', 'candidates','groupedCandidates','notVotedUsers'));
+        return view('Admin.features.dash-charts', compact('labels', 'data','totalVoters', 'votedCount', 'candidates','groupedCandidates','notVotedUsers','totalCandidates'));
 
     }
 

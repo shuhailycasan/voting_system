@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <div class=" sm:ml-64 min-h-screen">
+    <div class="mx-55 min-h-screen">
         <div class="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 
             <div class="text-center font-bold text-2xl flex justify-center">
@@ -156,7 +156,6 @@
                 </div>
             </div>
 
-
             <!-- Edit Modal -->
             <div id="editModal"
                  class="fixed inset-0 hidden bg-black/40 backdrop-blur-sm z-50 justify-center items-center">
@@ -200,8 +199,6 @@
                     </form>
                 </div>
             </div>
-
-
         </div>
 
         {{--Adding modal--}}

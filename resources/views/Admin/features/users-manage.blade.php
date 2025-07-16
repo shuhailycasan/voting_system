@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <div class=" border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 sm:ml-64 min-h-screen">
+    <div class=" border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 sm:m-64 min-h-screen">
         <div class="rounded-sm bg-gray-50 dark:bg-gray-800 p-4">
 
             <div class="text-center font-bold text-2xl flex justify-center">
