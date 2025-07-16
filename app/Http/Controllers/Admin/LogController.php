@@ -21,7 +21,7 @@ class LogController extends Controller
             $query->where('description', 'like', '%' . $request->event . '%');
         }
 
-        $logs = $query->latest()->paginate(15);
+        $logs = $query->latest()->paginate(5);
 
         return view('Admin.features.logs', compact('logs'));
     }

@@ -23,8 +23,7 @@ class AdminDashboardController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', '%' . $search . '%')
                     ->orWhere('position', 'like', '%' . $search . '%');
-        })->paginate(5);
-
+            })->paginate(5);
 
 
         return view('Admin.features.candidate-manage', compact('candidatesAll', 'search'));
@@ -77,7 +76,8 @@ class AdminDashboardController extends Controller
     }
 
 
-    public function deleteCandidates($id){
+    public function deleteCandidates($id)
+    {
         $delCandidate = Candidate::findOrFail($id);
 
         // Log the delete activity BEFORE deleting
@@ -104,22 +104,18 @@ class AdminDashboardController extends Controller
         $totalVoters = User::where('role', 'voter')->count();
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
-        $candidates = Candidate::withCount('votes')->get();
-
+        //Total Candidates
         $totalCandidates = Candidate::count();
 
-
+        //Still not voted
         $notVotedUsers = $totalVoters - $votedCount;
 
         $groupedCandidates = $candidates->groupBy('position');
 
-
-        return view('Admin.features.dash-charts', compact('labels', 'data','totalVoters', 'votedCount', 'candidates','groupedCandidates','notVotedUsers','totalCandidates'));
-
+        return view('Admin.features.dash-charts', compact('labels', 'data', 'totalVoters', 'votedCount', 'candidates', 'groupedCandidates', 'notVotedUsers', 'totalCandidates'));
     }
 
-
-        public function ManageUsers(Request $request)
+    public function ManageUsers(Request $request)
     {
 
         $search = $request->input('search_users');
@@ -131,7 +127,7 @@ class AdminDashboardController extends Controller
             })->paginate(5);
 
 
-        return view('Admin.features.users-manage', compact('usersAll','search'));
+        return view('Admin.features.users-manage', compact('usersAll', 'search'));
 
     }
 
