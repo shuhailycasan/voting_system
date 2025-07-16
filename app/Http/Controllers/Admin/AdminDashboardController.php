@@ -165,6 +165,8 @@ class AdminDashboardController extends Controller
         Excel::import(new VoterCodeImport, $request->file('voters_file'));
 
         return redirect()->back()->with('success', 'Voters codes imported successfully!');
+
+
     }
 
 }
