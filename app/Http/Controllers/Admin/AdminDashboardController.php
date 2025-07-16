@@ -31,17 +31,50 @@ class AdminDashboardController extends Controller
 
     public function addCandidates(Request $request)
     {
-        $add_candidates = $request->validate([
+        $request->validate([
             'name' => 'required',
             'position' => 'required',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        Candidate::create($add_candidates);
+        $candidate = new Candidate();
+        $candidate->name = $request->name;
+        $candidate->position = $request->position;
+        $candidate->save();
+
+        if ($request->hasFile('photo')) {
+            $candidate->addMediaFromRequest('photo')->toMediaCollection('candidate_photo');
+        }
 
         return redirect()
             ->route('admin.candidate.table')
             ->with('success', 'Candidate added successfully!');
     }
+
+
+    public function updateCandidate(Request $request, $id)
+    {
+        $candidate = Candidate::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'photo' => 'nullable|image|max:2048',
+        ]);
+
+        $candidate->update([
+            'name' => $validated['name'],
+            'position' => $validated['position'],
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $candidate->clearMediaCollection('candidate_photo');
+            $candidate->addMediaFromRequest('photo')->toMediaCollection('candidate_photo');
+        }
+
+        return redirect()->back()->with('success', 'Candidate updated successfully.');
+    }
+
 
     public function deleteCandidates($id){
         $delCandidate = Candidate::findOrFail($id);
