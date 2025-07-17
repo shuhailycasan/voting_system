@@ -89,7 +89,7 @@ Route::controller(AdminDashboardController::class)->group(function () {
 })->middleware('auth');
 
 
-Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs')->middleware('auth');
+Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs.index')->middleware('auth');
 
 
 

@@ -15,8 +15,8 @@ class VoterCodeImport implements ToModel
     public function model(array $row)
     {
         return new User([
-            'code' =>$row[0],
-            'role'=> 'voter',
+            'code' =>$row['code'],
+            'role' =>'voter',
             'voted' => false,
         ]);
     }

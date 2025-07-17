@@ -43,7 +43,7 @@ class User extends Authenticatable implements HasMedia
         'remember_token',
     ];
 
-    protected static $logAttributes = ['name', 'role'];
+    protected static $logAttributes = ['name', 'role', 'code', 'voted'];
     protected static $logName = 'user';
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
@@ -74,6 +74,11 @@ class User extends Authenticatable implements HasMedia
 
     public function getActivitylogOptions(): LogOptions
     {
-        // TODO: Implement getActivitylogOptions() method.
+        return LogOptions::defaults()
+            ->logOnly(['code', 'voted_at'])
+            ->useLogName('User')
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+
     }
 }

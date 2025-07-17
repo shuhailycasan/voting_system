@@ -10,13 +10,14 @@
             @foreach($groupedCandidates as $position => $candidates)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
                     <h2 class="text-md font-semibold text-center text-emerald-600">{{ $position }}</h2>
-                    <ul class="mt-2 space-y-1">
-                        @foreach($candidates->sortByDesc('votes_count')->take(3) as $candidate)
-                            <li class="text-sm font-medium text-gray-800 dark:text-white">
-                                🥇 {{ $candidate->name }} - {{ $candidate->votes_count }} votes
-                            </li>
-                        @endforeach
-                    </ul>
+
+                    <canvas id="chart-{{ \Str::slug($position) }}"></canvas>
+
+                    @php
+                        $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
+                        $labels = $topCandidates->pluck('name');
+                        $votes = $topCandidates->pluck('votes_count');
+                    @endphp
                 </div>
             @endforeach
         </div>
@@ -27,42 +28,29 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Total Voters</h2>
-                        <p class="mt-2 text-3xl font-bold text-emerald-600">{{ $totalVoters }}</p>
+                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voter Participation</h2>
+                        <canvas id="voterParticipationChart" height="200"></canvas>
+
+                        <div class="mt-4 text-center">
+                        <span id="voterParticipationRate" class="text-2xl font-bold text-emerald-600">
+                            {{-- This gets updated dynamically --}}
+                        </span>
+                        </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voted</h2>
-                        <p class="mt-2 text-3xl font-bold text-emerald-600">{{ $votedCount }}</p>
-                    </div>
 
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Not Voted</h2>
-                        <p class="mt-2 text-3xl font-bold text-emerald-600">{{ $notVotedUsers }}</p>
+                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voting Activity Over Time</h2>
+                        <canvas id="votingTrendChart" height="150"></canvas>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Total Candidates</h2>
-                        <p class="mt-2 text-3xl font-bold text-emerald-600">{{ $totalCandidates }}</p>
-                    </div>
+
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach ($groupedCandidates as $position => $candidates)
-                <div
-                    class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-                    <h2 class="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">{{ $position }}</h2>
-                    <canvas id="chart-{{ Str::slug($position) }}" class="w-full h-64"></canvas>
-                </div>
-            @endforeach
-        </div>
-
-
-
-
 
     </div>
+
 
     @php
         $colors = [
@@ -71,6 +59,9 @@
             'Secretary' => 'rgba(255, 206, 86, 0.6)', // Yellow
             'Treasurer' => 'rgba(75, 192, 192, 0.6)', // Teal
         ];
+
+
+
     @endphp
 
     <script>
@@ -96,6 +87,7 @@
                     },
                     options: {
                         responsive: true,
+                        // indexAxis: 'y',
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -110,5 +102,152 @@
             @endforeach
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const voted = {{ $votedCount }};
+            const notVoted = {{ $notVotedUsers }};
+            const total = voted + notVoted;
+            const percentage = ((voted / total) * 100).toFixed(1);
+
+            // Show % with icon
+            const indicator = percentage >= 70
+                ? `<span class="text-emerald-500">▲ ${percentage}%</span>`
+                : `<span class="text-red-500">▼ ${percentage}%</span>`;
+
+            document.getElementById('voterParticipationRate').innerHTML = indicator;
+
+            const ctx = document.getElementById('voterParticipationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Voted', 'Not Voted'],
+                    datasets: [{
+                        data: [voted, notVoted],
+                        backgroundColor: ['#10b981', '#f87171'],
+                        borderColor: '#1f2937',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#6b7280'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let value = context.raw;
+                                    return `${context.label}: ${value} (${((value / total) * 100).toFixed(1)}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Chart(document.getElementById('chart-{{ \Str::slug($position) }}'), {
+                type: 'bar',
+                data: {
+                    labels: {!! $labels->toJson() !!},
+                    datasets: [{
+                        label: 'Votes',
+                        data: {!! $votes->toJson() !!},
+                        backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'] // gold, silver, bronze
+                        borderRadius: 8,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bars
+                    responsive: true,
+                    plugins: {
+                        legend: {display: false},
+                        title: {
+                            display: true,
+                            text: '{{ $position }} Top 3'
+                        }
+                    },
+                    scales: {
+                        x: {beginAtZero: true}
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const timeLabels = {!! json_encode(array_keys($votesByHour->toArray())) !!};
+            const voteCounts = {!! json_encode(array_values($votesByHour->toArray())) !!};
+
+            const ctx = document.getElementById("votingTrendChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line", // or "bar" if you want bars instead
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: "Votes per Hour",
+                        data: voteCounts,
+                        borderColor: "#10B981",
+                        backgroundColor: "rgba(16, 185, 129, 0.2)",
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: "#10B981",
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time',
+                                color: '#6B7280'
+                            },
+                            ticks: {
+                                color: '#6B7280'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Votes',
+                                color: '#6B7280'
+                            },
+                            ticks: {
+                                color: '#6B7280'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#6B7280'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y} votes`
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+
 
 @endsection

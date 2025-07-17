@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\VoterCodeImport;
 use App\Models\Candidate;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
@@ -97,12 +98,20 @@ class AdminDashboardController extends Controller
     {
         $candidates = Candidate::withCount('votes')->get();
 
+
         $labels = $candidates->pluck('name');
         $data = $candidates->pluck('candidate_id');
 
         // Example: count voters who already voted
         $totalVoters = User::where('role', 'voter')->count();
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
+
+        //TIME
+        $votesByHour = User::whereNotNull('voted_at')
+            ->get()
+            ->groupBy(fn($user) => Carbon::parse($user->voted_at)->format('H:00'))
+            ->map(fn($group) => $group->count())
+            ->sortKeys();
 
         //Total Candidates
         $totalCandidates = Candidate::count();
@@ -112,7 +121,9 @@ class AdminDashboardController extends Controller
 
         $groupedCandidates = $candidates->groupBy('position');
 
-        return view('Admin.features.dash-charts', compact('labels', 'data', 'totalVoters', 'votedCount', 'candidates', 'groupedCandidates', 'notVotedUsers', 'totalCandidates'));
+        return view('Admin.features.dash-charts', compact('labels', 'data',
+            'totalVoters', 'votedCount', 'candidates',
+            'groupedCandidates', 'notVotedUsers', 'totalCandidates','votesByHour'));
     }
 
     public function ManageUsers(Request $request)
@@ -159,14 +170,27 @@ class AdminDashboardController extends Controller
     public function importVoters(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:csv,xlsx'
+            'voters_file' => 'required|file|mimes:csv,txt'
         ]);
 
-        Excel::import(new VoterCodeImport, $request->file('voters_file'));
+        $file = $request->file('voters_file');
+        $path = $file->getRealPath();
+        $data = array_map('str_getcsv', file($path));
+
+        // Skip header if present
+        if (strtolower(trim($data[0][0])) === 'code') {
+            array_shift($data);
+        }
+
+        foreach ($data as $row) {
+            User::create([
+                'code' => $row[0],
+                'role' => 'voter',
+                'voted' => false,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Voters codes imported successfully!');
-
-
     }
 
 }
