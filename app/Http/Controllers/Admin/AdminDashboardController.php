@@ -6,6 +6,7 @@ use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VoterCodeImport;
 use App\Models\Candidate;
+use App\Models\Position;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,6 +52,38 @@ class AdminDashboardController extends Controller
         return redirect()
             ->route('admin.candidate.table')
             ->with('success', 'Candidate added successfully!');
+    }
+
+    public function addPositions(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:single,multiple'
+        ]);
+
+        $position = new Position();
+        $position->name = $request->name;
+        $position->type = $request->type;
+        $position->save();
+
+        return redirect()
+            ->route('admin.candidate.table')
+            ->with('success', 'Position added successfully!');
+    }
+
+    public function ManagePosition(Request $request)
+    {
+
+        $search_position = $request->input('search');
+
+        $positionAll = Position::query()
+            ->when($search_position, function ($query, $search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('type', 'like', '%' . $search . '%');
+            })->paginate(5);
+
+
+        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
     }
 
 

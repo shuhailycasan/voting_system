@@ -134,7 +134,7 @@
     });
 </script>
 
-{{--scripts for modals--}}
+{{--scripts for Confirmation modals--}}
 <script>
     function openConfirmation() {
         const votes = document.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');

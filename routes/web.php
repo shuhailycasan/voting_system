@@ -78,6 +78,10 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::put('/admin/candidates/{id}',  'updateCandidate')->name('admin.candidate.update');
 
+    Route::post('/admin/add-position', 'addPositions')->name('admin.position.add');
+
+    Route::get('/admin/users-position', 'ManagePosition')->name('admin.position');
+
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
 
     Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');

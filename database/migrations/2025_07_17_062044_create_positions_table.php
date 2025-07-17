@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->enum('type', ['single', 'multiple'])->default('single');
+
+            $table->unsignedBigInteger('max_votes')->default(1);
+
+            $table->unsignedBigInteger('order')->default(0);
             $table->timestamps();
         });
     }

@@ -25,6 +25,11 @@ class Candidate extends Model implements HasMedia
         return $this->hasMany(Vote::class);
     }
 
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {
