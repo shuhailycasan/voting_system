@@ -9,6 +9,7 @@ use App\Models\Candidate;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
 
@@ -129,13 +130,19 @@ class AdminDashboardController extends Controller
     public function ManageUsers(Request $request)
     {
 
-        $search = $request->input('search_users');
+        $search = request('search_users');
+        $page = request('page',1);
 
-        $usersAll = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where('code', 'like', '%' . $search . '%')
-                    ->orWhere('role', 'like', '%' . $search . '%');
-            })->paginate(5);
+        $cachekey = "users_page_{$page}_search_". md5($search);
+
+
+        $usersAll = Cache::remember ($cachekey, now()->addMinutes(5), function () use ($search) {
+            return User::query()
+                ->when($search, function ($query, $search) {
+                    $query->where('code', 'like', '%' . $search . '%')
+                        ->orWhere('role', 'like', '%' . $search . '%');
+                })->paginate(5);
+        });
 
 
         return view('Admin.features.users-manage', compact('usersAll', 'search'));

@@ -22,100 +22,100 @@
 
         <h2 class="text-xl font-bold ">Pumili ng Kandidato</h2>
 
-            <form id="voteForm" action="{{ route('vote.submit') }}" method="POST">
-                @csrf
+        <form id="voteForm" action="{{ route('vote.submit') }}" method="POST">
+            @csrf
 
-                <div class="p-3 m-3 bg-color shadow">
-                    <h2 class="text-xl font-bold mb-2">1.Isang boto para sa Presidente</h2>
+            <div class="p-3 m-3 bg-color shadow">
+                <h2 class="text-xl font-bold mb-2">1.Isang boto para sa Presidente</h2>
 
-                    <div class="grid grid-cols-1 gap-4">
-                        @foreach ($candidates->where('position', 'President') as $candidate)
-                            <label class="block">
-                                <input type="radio" name="votes[President]" value="{{ $candidate->id }}"
-                                       id="president-{{ $candidate->id }}" class="hidden peer" required>
-                                <div
-                                    class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                    {{ $candidate->name }}
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="p-3  m-3 bg-color shadow">
-                    <h2 class="text-xl font-bold mb-2">2. Isang boto para sa Bise-Presidente</h2>
-
-                    <div class="grid grid-cols-1 gap-4">
-                        @foreach ($candidates->where('position', 'Vice-President') as $candidate)
-                            <label class="block">
-                                <input type="radio" name="votes[Vice-President]" value="{{ $candidate->id }}"
-                                       id="vice-president-{{ $candidate->id }}" class="hidden peer" required>
-                                <div
-                                    class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                    {{ $candidate->name }}
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="p-3 m-3 bg-color shadow">
-                    <h2 class="text-xl font-bold mb-2">3. Isang boto para sa Sekritarya</h2>
-
-                    <div class="grid grid-cols-1 gap-4">
-                        @foreach ($candidates->where('position', 'Secretary') as $candidate)
-                            <label class="block">
-                                <input type="radio" name="votes[Secretary]" value="{{ $candidate->id }}"
-                                       id="Secretary-{{ $candidate->id }}" class="hidden peer" required>
-                                <div
-                                    class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                    {{ $candidate->name }}
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="p-3 m-3 bg-color shadow">
-                    <h2 class="text-xl font-bold mb-2">4. Dalawang boto para sa Business Manager</h2>
-
-                    <div class="grid grid-cols-1 gap-4">
-                        @foreach ($candidates->where('position', 'business_manager') as $candidate)
-                            <label class="block">
-                                <input type="checkbox" name="votes[business_manager][]" value="{{ $candidate->id }}"
-                                       class="hidden peer">
-                                <div
-                                    class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                    {{ $candidate->name }}
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <button class="bg-emerald-500 rounded-lg py-1 px-2 text-white font-bold"
-                        onclick="openConfirmation()" type="button">Submit Vote
-                </button>
-            </form>
-
-            <!-- Confirmation Modal -->
-            <div id="confirmationModal"
-                 class="hidden fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-100 max-w-md">
-                    <h2 class="text-lg font-bold mb-4">Kumpirmado na ba ang iyong boto?</h2>
-                    <ul id="voteSummaryList" class="mb-4 text-sm space-y-2 text-gray-700">
-                        <!-- Choices get filled in here -->
-                    </ul>
-                    <div class="flex justify-end space-x-2">
-                        <button type="button" onclick="closeConfirmation()"
-                                class="px-4 py-2 bg-emerald-400 text-white rounded">hindi, pa
-                        </button>
-                        <button type="submit" form="voteForm" class="px-4 py-2 bg-emerald-600 text-white rounded">
-                            Oo, sigurado ako
-                        </button>
-                    </div>
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach ($candidates->where('position', 'President') as $candidate)
+                        <label class="block">
+                            <input type="radio" name="votes[President]" value="{{ $candidate->id }}"
+                                   id="president-{{ $candidate->id }}" class="hidden peer" required>
+                            <div
+                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
+                                {{ $candidate->name }}
+                            </div>
+                        </label>
+                    @endforeach
                 </div>
             </div>
+
+            <div class="p-3  m-3 bg-color shadow">
+                <h2 class="text-xl font-bold mb-2">2. Isang boto para sa Bise-Presidente</h2>
+
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach ($candidates->where('position', 'Vice-President') as $candidate)
+                        <label class="block">
+                            <input type="radio" name="votes[Vice-President]" value="{{ $candidate->id }}"
+                                   id="vice-president-{{ $candidate->id }}" class="hidden peer" required>
+                            <div
+                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
+                                {{ $candidate->name }}
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="p-3 m-3 bg-color shadow">
+                <h2 class="text-xl font-bold mb-2">3. Isang boto para sa Sekritarya</h2>
+
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach ($candidates->where('position', 'Secretary') as $candidate)
+                        <label class="block">
+                            <input type="radio" name="votes[Secretary]" value="{{ $candidate->id }}"
+                                   id="Secretary-{{ $candidate->id }}" class="hidden peer" required>
+                            <div
+                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
+                                {{ $candidate->name }}
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="p-3 m-3 bg-color shadow">
+                <h2 class="text-xl font-bold mb-2">4. Dalawang boto para sa Business Manager</h2>
+
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach ($candidates->where('position', 'business_manager') as $candidate)
+                        <label class="block">
+                            <input type="checkbox" name="votes[business_manager][]" value="{{ $candidate->id }}"
+                                   class="hidden peer">
+                            <div
+                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
+                                {{ $candidate->name }}
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <button class="bg-emerald-500 rounded-lg py-1 px-2 text-white font-bold"
+                    onclick="openConfirmation()" type="button">Submit Vote
+            </button>
+        </form>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal"
+             class="hidden fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-100 max-w-md">
+                <h2 class="text-lg font-bold mb-4">Kumpirmado na ba ang iyong boto?</h2>
+                <ul id="voteSummaryList" class="mb-4 text-sm space-y-2 text-gray-700">
+                    <!-- Choices get filled in here -->
+                </ul>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeConfirmation()"
+                            class="px-4 py-2 bg-emerald-400 text-white rounded">hindi, pa
+                    </button>
+                    <button type="submit" form="voteForm" class="px-4 py-2 bg-emerald-600 text-white rounded">
+                        Oo, sigurado ako
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
