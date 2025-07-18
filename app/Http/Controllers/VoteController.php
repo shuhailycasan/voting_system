@@ -28,8 +28,6 @@ class VoteController extends Controller
         }
 
         foreach ($votes as $position => $candidateIdOrArray) {
-
-            //  Check if this position allows multiple votes
             if (is_array($candidateIdOrArray)) {
                 foreach ($candidateIdOrArray as $candidateId) {
                     $candidate = Candidate::findOrFail($candidateId);
@@ -37,7 +35,7 @@ class VoteController extends Controller
                     Vote::create([
                         'user_id' => $user->id,
                         'candidate_id' => $candidate->id,
-                        'position' => $position,
+                        'position_id' => $candidate->position_id,
                     ]);
                 }
             } else {
@@ -46,7 +44,7 @@ class VoteController extends Controller
                 Vote::create([
                     'user_id' => $user->id,
                     'candidate_id' => $candidate->id,
-                    'position' => $position,
+                    'position_id' => $candidate->position_id,
                 ]);
             }
         }

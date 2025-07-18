@@ -113,6 +113,7 @@
                     <tr class="text-center">
                         <th class="px-6 py-3">Position Name</th>
                         <th class="px-6 py-3">Position Type</th>
+                        <th class="px-6 py-3">Max Vote</th>
                         <th class="px-6 py-3">Actions</th>
                     </tr>
                     </thead>
@@ -126,9 +127,12 @@
                                 {{ $positions->type }}
                             </td>
                             <td class="px-6 py-4">
+                                {{ $positions->max_votes }}
+                            </td>
+                            <td class="px-6 py-4">
                                 <div class="flex justify-center items-center space-x-2">
                                     <button
-                                        onclick="openEditModal({{ $positions->id }}, '{{ $positions->name }}', '{{ $positions->type }}')"
+                                        onclick="openEditPositionModal({{ $positions->id }}, '{{ $positions->name }}', '{{ $positions->type }}', '{{ $positions->max_votes }}')"
                                         class="text-blue-600 hover:text-blue-800 font-semibold">
                                         Edit
                                     </button>
@@ -144,6 +148,7 @@
                                     </form>
                                 </div>
                             </td>
+
                         </tr>
                     @empty
                         <tr>
@@ -161,6 +166,8 @@
 
         <!--MODALS-->
         @include('Admin.Modals.add-position')
+        @include('Admin.Modals.edit-position')
+
         @include('Admin.Modals.add-candidate')
         @include('Admin.Modals.edit-candidate')
     </div>

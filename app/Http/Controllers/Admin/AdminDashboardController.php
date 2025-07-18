@@ -65,12 +65,14 @@ class AdminDashboardController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:single,multiple'
+            'type' => 'required|in:single,multiple',
+            'max_votes' => 'required|integer|min:1'
         ]);
 
         $position = new Position();
         $position->name = $request->name;
         $position->type = $request->type;
+        $position->max_votes = $request->max_votes;
         $position->save();
 
         return redirect()
@@ -119,6 +121,26 @@ class AdminDashboardController extends Controller
         return redirect()->back()->with('success', 'Candidate updated successfully.');
     }
 
+    public function updatePosition(Request $request, $id)
+    {
+        \Log::info("updatePosition hit", $request->all());
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:single,multiple',
+            'max_votes' => 'required|integer|min:1',
+        ]);
+
+        $position = Position::findOrFail($id);
+
+        $position->update([
+            'name' => $validated['name'],
+            'type' => $validated['type'],
+            'max_votes' => $validated['max_votes'],
+        ]);
+
+        return redirect()->back()->with('success', 'Position updated successfully.');
+    }
 
 
     public function deleteCandidates($id)
