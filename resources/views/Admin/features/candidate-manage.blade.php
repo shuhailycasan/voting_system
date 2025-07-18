@@ -42,6 +42,7 @@
         <!-- Table for Candidates -->
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
+
                 <table class="min-w-full table-auto text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                     <tr class="text-center">
@@ -52,6 +53,7 @@
                     </tr>
                     </thead>
                     <tbody class="text-center">
+
                     @forelse($candidatesAll as $candidate)
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="px-6 py-4">
@@ -67,12 +69,12 @@
                                 {{ $candidate->name }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ $candidate->position }}
+                                {{ $candidate->position->name ?? 'No Position' }}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-center items-center space-x-2">
                                     <button
-                                        onclick="openEditModal({{ $candidate->id }}, '{{ $candidate->name }}', '{{ $candidate->position }}', '{{ $candidate->party }}')"
+                                        onclick="openEditModal({{ $candidate->id }}, '{{ $candidate->name }}', '{{ $candidate->position_id }}')"
                                         class="text-blue-600 hover:text-blue-800 font-semibold">
                                         Edit
                                     </button>
@@ -115,7 +117,7 @@
                     </tr>
                     </thead>
                     <tbody class="text-center">
-                    @forelse($positionAll as $positions)
+                    @forelse($positionsAll as $positions)
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                 {{ $positions->name }}
@@ -131,7 +133,7 @@
                                         Edit
                                     </button>
 
-                                    <form action="{{ route('admin.candidate.delete', $positions->id) }}" method="POST"
+                                    <form action="{{ route('admin.position.delete', $positions->id) }}" method="POST"
                                           onsubmit="return confirm('Are you sure you want to delete this position?')">
                                         @csrf
                                         @method('DELETE')
@@ -152,7 +154,7 @@
                 </table>
 
                 <div class="mt-4 px-4">
-                    {{ $candidatesAll->appends(['search' => request('search')])->links() }}
+                    {{ $positionsAll->appends(['search' => request('search')])->links() }}
                 </div>
             </div>
         </div>
@@ -160,7 +162,7 @@
         <!--MODALS-->
         @include('Admin.Modals.add-position')
         @include('Admin.Modals.add-candidate')
-        @include('Admin.Modals.delete-candidate')
+        @include('Admin.Modals.edit-candidate')
     </div>
 
 @endsection

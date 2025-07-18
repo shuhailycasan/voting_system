@@ -15,9 +15,14 @@
             </div>
 
             <div class="mb-3">
-                <label class="block font-medium text-sm text-gray-700 dark:text-white">Position</label>
-                <input type="text" name="position" required
-                       class="w-full mt-1 border border-gray-300 p-2 rounded dark:bg-gray-700 dark:text-white">
+                <label for="position_id" class="block font-medium text-sm text-gray-700 dark:text-white">Position</label>
+                <select name="position_id" id="position_id" required
+                        class="w-full mt-1 border border-gray-300 p-2 rounded dark:bg-gray-700 dark:text-white">
+                    <option value="" disabled selected>Select a position</option>
+                    @foreach($positionsAll as $position)
+                        <option value="{{ $position->id }}">{{ $position->name }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="mb-4">

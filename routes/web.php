@@ -84,6 +84,8 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
 
+    Route::delete('/admin/delete-position/{id}', 'deletePositions')->name('admin.position.delete');
+
     Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');
 
     Route::post('/admin/import-voters', 'importVoters')->name('admin.import.voters');
@@ -94,7 +96,5 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
 
 Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs.index')->middleware('auth');
-
-
 
 require __DIR__.'/auth.php';

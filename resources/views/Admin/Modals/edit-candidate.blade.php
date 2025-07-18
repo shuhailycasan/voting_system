@@ -7,7 +7,7 @@
 
         <h2 class="text-xl font-semibold mb-4">Edit Candidate</h2>
 
-        <form id="editCandidateForm" method="POST" enctype="multipart/form-data">
+        <form  id="editCandidateForm" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -20,12 +20,13 @@
             </div>
 
             <div class="mb-4">
-                <label for="edit_position" class="block mb-1 font-medium">Position</label>
-                <input type="text" name="position" id="edit_position"
-                       class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"/>
+                <label for="edit_position" class="block mb-1 font-medium">Position Name</label>
+                <select name="position_id" id="edit_position" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white">
+                    @foreach ($positionsAll as $position)
+                        <option value="{{ $position->id }}"  >{{ $position->name }}</option>
+                    @endforeach
+                </select>
             </div>
-
-
 
             <div class="mb-4">
                 <label for="photo" class="block mb-1 font-medium">Update Photo (Optional)</label>
@@ -43,15 +44,18 @@
 
 {{--editing modal--}}
 <script>
-    function openEditModal(id, name, position, party) {
+    function openEditModal(id, name, positionId) {
+        console.log('Editing candidate:', { id, name, positionId });
+
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_name').value = name;
-        document.getElementById('edit_position').value = position;
+        document.getElementById('edit_position').value = positionId;
 
-        // Set the form action dynamically
-        document.getElementById('editCandidateForm').action =
-            `/admin/candidates/${id}`;
 
+        // Set the form action
+        document.getElementById('editCandidateForm').action = `/admin/candidates/${id}`;
+
+        // Show modal
         document.getElementById('editModal').classList.remove('hidden');
         document.getElementById('editModal').classList.add('flex');
     }

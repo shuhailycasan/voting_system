@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Candidate;
+use App\Models\Position;
 use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,8 @@ class VoteController extends Controller
     public function showVotePage()
     {
         $candidates = Candidate::all();
-        return view('vote.vote', compact('candidates'));
+        $positions = Position::all();
+        return view('vote.vote', compact('candidates','positions'));
     }
 
     public function submitVote(Request $request)

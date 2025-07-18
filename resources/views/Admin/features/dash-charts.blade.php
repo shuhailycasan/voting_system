@@ -3,24 +3,21 @@
 
 @section('content')
     <div class=" sm:ml-45 min-h-screen">
-
         <h1 class="text-2xl font-bold text-center text-emerald-700 dark:text-emerald-400 m-2">Candidates Chart</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 mb-3">
             @foreach($groupedCandidates as $position => $candidates)
+                @php
+                    $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
+                @endphp
+
                 <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
                     <h2 class="text-md font-semibold text-center text-emerald-600">{{ $position }}</h2>
-
                     <canvas id="chart-{{ \Str::slug($position) }}"></canvas>
-
-                    @php
-                        $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
-                        $labels = $topCandidates->pluck('name');
-                        $votes = $topCandidates->pluck('votes_count');
-                    @endphp
                 </div>
             @endforeach
         </div>
+
 
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-6 border border-gray-200">
             <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg">
@@ -48,61 +45,96 @@
             </div>
         </div>
 
-
     </div>
 
-
-    @php
-        $colors = [
-            'President' => 'rgba(255, 99, 132, 0.6)', // Red
-            'Vice President' => 'rgba(54, 162, 235, 0.6)', // Blue
-            'Secretary' => 'rgba(255, 206, 86, 0.6)', // Yellow
-            'Treasurer' => 'rgba(75, 192, 192, 0.6)', // Teal
-        ];
-
-
-
-    @endphp
-
-    <script>
-        const colors = @json($colors);
-
-        document.addEventListener('DOMContentLoaded', function () {
-            @foreach ($groupedCandidates as $position => $candidates)
-            const ctx_{{ Str::slug($position, '_') }} = document.getElementById('chart-{{ Str::slug($position) }}')?.getContext('2d');
-
-            if (ctx_{{ Str::slug($position, '_') }}) {
-                new Chart(ctx_{{ Str::slug($position, '_') }}, {
-                    type: 'bar',
-                    data: {
-                        labels: @json($candidates->pluck('name')),
-                        datasets: [{
-                            label: 'Votes for {{ $position }}',
-                            data: @json($candidates->pluck('votes_count')),
-                            backgroundColor: colors["{{ $position }}"] ?? 'rgba(16, 185, 129, 0.6)',
-                            borderColor: 'rgba(5, 150, 105, 1)',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        // indexAxis: 'y',
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                @foreach($groupedCandidates as $position => $candidates)
+                const ctx_{{ Str::slug($position, '_') }} = document.getElementById('chart-{{ \Str::slug($position) }}');
+                if (ctx_{{ Str::slug($position, '_') }}) {
+                    new Chart(ctx_{{ Str::slug($position, '_') }}, {
+                        type: 'bar',
+                        data: {
+                            labels: @json($candidates->sortByDesc('votes_count')->take(3)->pluck('name')),
+                            datasets: [{
+                                label: 'Votes for {{ $position }}',
+                                data: @json($candidates->sortByDesc('votes_count')->take(3)->pluck('votes_count')),
+                                backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'],
+                                borderRadius: 8,
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: '{{ $position }} Top 3'
                                 }
+                            },
+                            scales: {
+                                x: { beginAtZero: true }
                             }
                         }
-                    }
-                });
-            }
-            @endforeach
-        });
-    </script>
+                    });
+                }
+                @endforeach
+            });
+        </script>
+    @endpush
+{{--    @php--}}
+{{--        $colors = [--}}
+{{--            'President' => 'rgba(255, 99, 132, 0.6)', // Red--}}
+{{--            'Vice President' => 'rgba(54, 162, 235, 0.6)', // Blue--}}
+{{--            'Secretary' => 'rgba(255, 206, 86, 0.6)', // Yellow--}}
+{{--            'Treasurer' => 'rgba(75, 192, 192, 0.6)', // Teal--}}
+{{--        ];--}}
+{{--    @endphp--}}
 
+
+{{--    <script>--}}
+{{--        const colors = @json($colors);--}}
+
+{{--        document.addEventListener('DOMContentLoaded', function () {--}}
+{{--            @foreach ($groupedCandidates as $position => $candidates)--}}
+{{--            const ctx_{{ Str::slug($position, '_') }} = document.getElementById('chart-{{ Str::slug($position) }}')?.getContext('2d');--}}
+
+{{--            if (ctx_{{ Str::slug($position, '_') }}) {--}}
+{{--                new Chart(ctx_{{ Str::slug($position, '_') }}, {--}}
+{{--                    type: 'bar',--}}
+{{--                    data: {--}}
+{{--                        labels: @json($candidates->pluck('name')),--}}
+{{--                        datasets: [{--}}
+{{--                            label: 'Votes for {{ $position }}',--}}
+{{--                            data: @json($candidates->pluck('votes_count')),--}}
+{{--                            backgroundColor: colors["{{ $position }}"] ?? 'rgba(16, 185, 129, 0.6)',--}}
+{{--                            borderColor: 'rgba(5, 150, 105, 1)',--}}
+{{--                            borderWidth: 1,--}}
+{{--                            borderRadius: 5,--}}
+{{--                        }]--}}
+{{--                    },--}}
+{{--                    options: {--}}
+{{--                        responsive: true,--}}
+{{--                        // indexAxis: 'y',--}}
+{{--                        scales: {--}}
+{{--                            y: {--}}
+{{--                                beginAtZero: true,--}}
+{{--                                ticks: {--}}
+{{--                                    stepSize: 1--}}
+{{--                                }--}}
+{{--                            }--}}
+{{--                        }--}}
+{{--                    }--}}
+{{--                });--}}
+{{--            }--}}
+{{--            @endforeach--}}
+{{--        });--}}
+{{--    </script>--}}
+
+
+{{--   VOTERS PARTICIPATION CHARTS --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const voted = {{ $votedCount }};
@@ -153,37 +185,39 @@
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            new Chart(document.getElementById('chart-{{ \Str::slug($position) }}'), {
-                type: 'bar',
-                data: {
-                    labels: {!! $labels->toJson() !!},
-                    datasets: [{
-                        label: 'Votes',
-                        data: {!! $votes->toJson() !!},
-                        backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'] // gold, silver, bronze
-                        borderRadius: 8,
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', // Horizontal bars
-                    responsive: true,
-                    plugins: {
-                        legend: {display: false},
-                        title: {
-                            display: true,
-                            text: '{{ $position }} Top 3'
-                        }
-                    },
-                    scales: {
-                        x: {beginAtZero: true}
-                    }
-                }
-            });
-        });
-    </script>
+{{--    <script>--}}
+{{--        document.addEventListener('DOMContentLoaded', function () {--}}
+{{--            new Chart(document.getElementById('chart-{{ \Str::slug($position) }}'), {--}}
+{{--                type: 'bar',--}}
+{{--                data: {--}}
+{{--                    labels: {!! $labels->toJson() !!},--}}
+{{--                    datasets: [{--}}
+{{--                        label: 'Votes',--}}
+{{--                        data: {!! $votes->toJson() !!},--}}
+{{--                        backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'] // gold, silver, bronze--}}
+{{--                        borderRadius: 8,--}}
+{{--                    }]--}}
+{{--                },--}}
+{{--                options: {--}}
+{{--                    indexAxis: 'y', // Horizontal bars--}}
+{{--                    responsive: true,--}}
+{{--                    plugins: {--}}
+{{--                        legend: {display: false},--}}
+{{--                        title: {--}}
+{{--                            display: true,--}}
+{{--                            text: '{{ $position }} Top 3'--}}
+{{--                        }--}}
+{{--                    },--}}
+{{--                    scales: {--}}
+{{--                        x: {beginAtZero: true}--}}
+{{--                    }--}}
+{{--                }--}}
+{{--            });--}}
+{{--        });--}}
+{{--    </script>--}}
 
+
+    {{--   VOTERS TREND CHARTS --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const timeLabels = {!! json_encode(array_keys($votesByHour->toArray())) !!};

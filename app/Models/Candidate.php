@@ -18,7 +18,7 @@ class Candidate extends Model implements HasMedia
 
 
 
-    protected $fillable = ['name','position'];
+    protected $fillable = ['name','position_id'];
 
     public function votes()
     {

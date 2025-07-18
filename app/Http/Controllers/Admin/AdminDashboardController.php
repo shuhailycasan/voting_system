@@ -22,27 +22,34 @@ class AdminDashboardController extends Controller
 
         $search = $request->input('search');
 
-        $candidatesAll = Candidate::query()
-            ->when($search, function ($query, $search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('position', 'like', '%' . $search . '%');
-            })->paginate(5);
+        $candidatesAll = Candidate::with('position')
+            ->where(function ($query) use ($search) {
+                $query->whereHas('position', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%");
+                })
+                    ->orWhere('name', 'like', "%$search%");
+            })
+            ->paginate(10);
 
 
-        return view('Admin.features.candidate-manage', compact('candidatesAll', 'search'));
+
+        $positionsAll = Position::paginate(5);
+
+
+        return view('Admin.features.candidate-manage', compact('candidatesAll', 'search', 'positionsAll'));
     }
 
     public function addCandidates(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'position' => 'required',
+            'name' => 'required|string|max:255',
+            'position_id' => 'required|exists:positions,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $candidate = new Candidate();
         $candidate->name = $request->name;
-        $candidate->position = $request->position;
+        $candidate->position_id= $request->position_id;
         $candidate->save();
 
         if ($request->hasFile('photo')) {
@@ -71,35 +78,37 @@ class AdminDashboardController extends Controller
             ->with('success', 'Position added successfully!');
     }
 
-    public function ManagePosition(Request $request)
-    {
-
-        $search_position = $request->input('search');
-
-        $positionAll = Position::query()
-            ->when($search_position, function ($query, $search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('type', 'like', '%' . $search . '%');
-            })->paginate(5);
-
-
-        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
-    }
+//    public function ManagePosition(Request $request)
+//    {
+//
+//        $search_position = $request->input('search');
+//
+//        $positionAll = Position::query()
+//            ->when($search_position, function ($query, $search) {
+//                $query->where('name', 'like', '%' . $search . '%')
+//                    ->orWhere('type', 'like', '%' . $search . '%');
+//            })->paginate(5);
+//
+//
+//        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
+//    }
 
 
     public function updateCandidate(Request $request, $id)
     {
-        $candidate = Candidate::findOrFail($id);
+        \Log::info("UpdateCandidate hit", $request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
+            'position_id' => 'required|integer|exists:positions,id',
             'photo' => 'nullable|image|max:2048',
         ]);
 
+        $candidate = Candidate::findOrFail($id);
+
         $candidate->update([
             'name' => $validated['name'],
-            'position' => $validated['position'],
+            'position_id' => $validated['position_id'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -109,6 +118,7 @@ class AdminDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Candidate updated successfully.');
     }
+
 
 
     public function deleteCandidates($id)
@@ -126,6 +136,22 @@ class AdminDashboardController extends Controller
 
         return redirect()->route('admin.candidate.table')
             ->with('deleted', 'Candidate deleted successfully!');
+    }
+    public function deletePositions($id)
+    {
+        $delPosition = Position::findOrFail($id);
+
+        // Log the delete activity BEFORE deleting
+        activity()
+            ->causedBy(auth()->user()) // who did it
+            ->performedOn($delPosition) // what was affected
+            ->withProperties(['Position_name' => $delPosition->name, 'position' => $delPosition->position_id])
+            ->log("Position candidate {$delPosition->name}");
+
+        $delPosition->delete();
+
+        return redirect()->route('admin.candidate.table')
+            ->with('deleted', 'Position deleted successfully!');
     }
 
     public function showDashboard()
@@ -153,7 +179,7 @@ class AdminDashboardController extends Controller
         //Still not voted
         $notVotedUsers = $totalVoters - $votedCount;
 
-        $groupedCandidates = $candidates->groupBy('position');
+        $groupedCandidates = $candidates->groupBy(fn ($c) => $c->position->name ?? 'No position');
 
         return view('Admin.features.dash-charts', compact('labels', 'data',
             'totalVoters', 'votedCount', 'candidates',

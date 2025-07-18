@@ -3,138 +3,161 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Community Voting</title>
 
-    <title>Laravel</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet"/>
+    <!-- Tailwind CDN (if not using Vite) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
 </head>
-<body class="bg-[#FDFDFC] text-[#1b1b18] ">
+<body class="bg-[#FDFDFC] text-[#1b1b18]">
+
 <div class="flex justify-center bg-emerald-700">
     <h1 class="text-lg text-center p-9 text-white font-bold">CAST YOUR VOTES</h1>
 </div>
-<div class="flex justify-center items-center h-auto">
-    <div class="flex flex-col pb-2">
 
-        <h2 class="text-xl font-bold ">Pumili ng Kandidato</h2>
+<div class="flex justify-center items-start py-10 px-4">
+    <div class="w-full max-w-4xl space-y-8">
 
         <form id="voteForm" action="{{ route('vote.submit') }}" method="POST">
             @csrf
 
-            <div class="p-3 m-3 bg-color shadow">
-                <h2 class="text-xl font-bold mb-2">1.Isang boto para sa Presidente</h2>
+            @foreach ($positions as $position)
+                <div class="p-4 bg-white shadow rounded-lg border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4">{{ $loop->iteration }}. {{ $position->name }}</h2>
 
-                <div class="grid grid-cols-1 gap-4">
-                    @foreach ($candidates->where('position', 'President') as $candidate)
-                        <label class="block">
-                            <input type="radio" name="votes[President]" value="{{ $candidate->id }}"
-                                   id="president-{{ $candidate->id }}" class="hidden peer" required>
-                            <div
-                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                {{ $candidate->name }}
-                            </div>
-                        </label>
-                    @endforeach
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        @foreach ($candidates->where('position_id', $position->id) as $candidate)
+                            <label class="block">
+                                <input
+                                    type="{{ $position->max_votes > 1 ? 'checkbox' : 'radio' }}"
+                                    name="votes[{{ $position->slug }}]{{ $position->max_votes > 1 ? '[]' : '' }}"
+                                    value="{{ $candidate->id }}"
+                                    class="hidden candidate-input"
+                                    data-position="{{ $position->slug }}"
+                                    data-id="{{ $candidate->id }}"
+                                >
+
+                                <div
+                                    class="candidate-card bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition flex flex-col items-center space-y-2"
+                                    data-position="{{ $position->slug }}"
+                                    data-id="{{ $candidate->id }}"
+                                >
+                                    <img src="{{ $candidate->getFirstMediaUrl('candidate_photo') }}" alt="{{ $candidate->name }}"
+                                         class="w-16 h-16 rounded-full object-cover mb-2">
+                                    <div>{{ $candidate->name }}</div>
+                                </div>
+                            </label>
+                        @endforeach
+
+                    </div>
                 </div>
+            @endforeach
+
+            <div class="text-right mt-4">
+                <button type="button" onclick="openConfirmation()"
+                        class="bg-emerald-500 hover:bg-emerald-600 rounded-lg py-2 px-4 text-white font-bold transition">
+                    Submit Vote
+                </button>
             </div>
-
-            <div class="p-3  m-3 bg-color shadow">
-                <h2 class="text-xl font-bold mb-2">2. Isang boto para sa Bise-Presidente</h2>
-
-                <div class="grid grid-cols-1 gap-4">
-                    @foreach ($candidates->where('position', 'Vice-President') as $candidate)
-                        <label class="block">
-                            <input type="radio" name="votes[Vice-President]" value="{{ $candidate->id }}"
-                                   id="vice-president-{{ $candidate->id }}" class="hidden peer" required>
-                            <div
-                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                {{ $candidate->name }}
-                            </div>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="p-3 m-3 bg-color shadow">
-                <h2 class="text-xl font-bold mb-2">3. Isang boto para sa Sekritarya</h2>
-
-                <div class="grid grid-cols-1 gap-4">
-                    @foreach ($candidates->where('position', 'Secretary') as $candidate)
-                        <label class="block">
-                            <input type="radio" name="votes[Secretary]" value="{{ $candidate->id }}"
-                                   id="Secretary-{{ $candidate->id }}" class="hidden peer" required>
-                            <div
-                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                {{ $candidate->name }}
-                            </div>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="p-3 m-3 bg-color shadow">
-                <h2 class="text-xl font-bold mb-2">4. Dalawang boto para sa Business Manager</h2>
-
-                <div class="grid grid-cols-1 gap-4">
-                    @foreach ($candidates->where('position', 'business_manager') as $candidate)
-                        <label class="block">
-                            <input type="checkbox" name="votes[business_manager][]" value="{{ $candidate->id }}"
-                                   class="hidden peer">
-                            <div
-                                class="peer-checked:bg-emerald-600 peer-checked:text-white bg-emerald-100 text-center font-semibold rounded-lg p-4 cursor-pointer border border-emerald-400 hover:bg-blue-200 transition">
-                                {{ $candidate->name }}
-                            </div>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <button class="bg-emerald-500 rounded-lg py-1 px-2 text-white font-bold"
-                    onclick="openConfirmation()" type="button">Submit Vote
-            </button>
         </form>
 
-        <!-- Confirmation Modal -->
+        {{-- Confirmation Modal --}}
         <div id="confirmationModal"
              class="hidden fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 w-100 max-w-md">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
                 <h2 class="text-lg font-bold mb-4">Kumpirmado na ba ang iyong boto?</h2>
                 <ul id="voteSummaryList" class="mb-4 text-sm space-y-2 text-gray-700">
-                    <!-- Choices get filled in here -->
+                    <!-- Summary goes here -->
                 </ul>
                 <div class="flex justify-end space-x-2">
                     <button type="button" onclick="closeConfirmation()"
-                            class="px-4 py-2 bg-emerald-400 text-white rounded">hindi, pa
+                            class="px-4 py-2 bg-emerald-400 text-white rounded">Hindi, pa
                     </button>
-                    <button type="submit" form="voteForm" class="px-4 py-2 bg-emerald-600 text-white rounded">
-                        Oo, sigurado ako
+                    <button type="submit" form="voteForm" class="px-4 py-2 bg-emerald-600 text-white rounded">Oo,
+                        sigurado ako
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 </body>
 </html>
 
-{{--scripts for Voting 2--}}
+{{-- Vote Limit Script --}}
 <script>
-    document.querySelectorAll('input[name="votes[business_manager][]"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const checked = document.querySelectorAll('input[name="votes[business_manager][]"]:checked');
-            if (checked.length > 2) {
+    document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', function () {
+            const pos = this.dataset.position;
+            const max = parseInt(this.dataset.max || 1);
+            const checked = document.querySelectorAll(`input[data-position="${pos}"]:checked`);
+            if (checked.length > max) {
                 this.checked = false;
-                alert('You can only select 2 Business Managers.');
+                alert(`You can only select ${max} candidate(s) for ${formatPosition(pos)}.`);
             }
         });
     });
 </script>
 
-{{--scripts for Confirmation modals--}}
+<script>
+    document.querySelectorAll('.candidate-card').forEach(card => {
+        card.addEventListener('click', function () {
+            const position = this.dataset.position;
+            const id = this.dataset.id;
+
+            // Uncheck others if radio
+            const inputs = document.querySelectorAll(`input[name="votes[${position}]"], input[name="votes[${position}][]"]`);
+            if (inputs[0]?.type === 'radio') {
+                inputs.forEach(i => {
+                    i.checked = false;
+                    removeHighlight(i.dataset.position, i.dataset.id);
+                });
+            }
+
+            // Toggle check for checkbox
+            const input = document.querySelector(`input[data-position="${position}"][data-id="${id}"]`);
+            if (input.type === 'checkbox') {
+                input.checked = !input.checked;
+            } else {
+                input.checked = true;
+            }
+
+            highlightSelected();
+        });
+    });
+
+    function highlightSelected() {
+        document.querySelectorAll('.candidate-card').forEach(card => {
+            card.classList.remove('bg-emerald-600', 'text-white');
+            card.classList.add('bg-emerald-100', 'text-black');
+        });
+
+        document.querySelectorAll('.candidate-input:checked').forEach(input => {
+            const card = document.querySelector(`.candidate-card[data-position="${input.dataset.position}"][data-id="${input.dataset.id}"]`);
+            if (card) {
+                card.classList.remove('bg-emerald-100', 'text-black');
+                card.classList.add('bg-emerald-600', 'text-white');
+            }
+        });
+    }
+
+    function removeHighlight(position, id) {
+        const card = document.querySelector(`.candidate-card[data-position="${position}"][data-id="${id}"]`);
+        if (card) {
+            card.classList.remove('bg-emerald-600', 'text-white');
+            card.classList.add('bg-emerald-100', 'text-black');
+        }
+    }
+
+    // Auto-highlight on load if browser re-fills
+    window.addEventListener('DOMContentLoaded', highlightSelected);
+</script>
+
+
+{{-- Confirmation Modal Script --}}
 <script>
     function openConfirmation() {
         const votes = document.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
@@ -161,13 +184,12 @@
     }
 
     function closeConfirmation() {
-        document.getElementById('confirmationModal').classList.add('hidden');
-        document.getElementById('confirmationModal').classList.remove('flex');
+        const modal = document.getElementById('confirmationModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     function formatPosition(pos) {
-        return pos
-            .replace(/_/g, ' ')
-            .replace(/\b\w/g, c => c.toUpperCase());
+        return pos.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 </script>
