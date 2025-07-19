@@ -1,35 +1,53 @@
 <!-- Add position Modal -->
-<div id="addPositionModal"
-     class="fixed inset-0 hidden bg-black/40 backdrop-blur-sm z-50 justify-center items-center">
-    <div class="bg-white p-6 rounded shadow-lg max-w-md w-full relative dark:bg-gray-800">
-        <h2 class="text-xl font-bold mb-4 text-center text-emerald-600">Add New Position</h2>
+<div id="addPositionModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black/40 backdrop-blur-sm">
+    <div class="relative w-full max-w-md p-6 bg-white rounded shadow-lg dark:bg-gray-800">
+        <h2 class="mb-4 text-xl font-bold text-center text-emerald-600">Add New Position</h2>
 
+        @if (session('success'))
+            <div class="p-2 text-green-800 bg-green-200 rounded">{{ session('success') }}</div>
+        @endif
+
+        @if (session('error'))
+            <div class="p-2 text-red-800 bg-red-200 rounded">{{ session('error') }}</div>
+        @endif
         <form action="{{ route('admin.position.add') }}" method="POST" enctype="multipart/form-data">
             @method('POST')
             @csrf
 
             <div class="mb-3">
-                <label class="block font-medium text-sm text-gray-700 dark:text-white">Position Name</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-white">Position Name</label>
                 <input type="text" name="name" required
-                       class="w-full mt-1 border border-gray-300 p-2 rounded dark:bg-gray-700 dark:text-white">
+                    class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="mb-3">
-                <label class="block font-medium text-sm text-gray-700 dark:text-white">Type</label>
-                <select name="type" required class="w-full mt-1 border border-gray-300 p-2 rounded dark:bg-gray-700 dark:text-white">
+                <label class="block text-sm font-medium text-gray-700 dark:text-white">Type</label>
+                <select name="type" required
+                    class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
                     <option value="single">Single</option>
                     <option value="multiple">Multiple</option>
                 </select>
             </div>
 
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Max Votes</label>
+                <input type="number" name="max_votes" min="1"
+                    class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Order</label>
+                <input type="number" name="order" min="1"
+                    class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white" />
+            </div>
+
 
             <div class="flex justify-end space-x-2">
                 <button type="button" onclick="closeAddPositionModal()"
-                        class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                     Cancel
                 </button>
-                <button type="submit"
-                        class="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">
+                <button type="submit" class="px-4 py-2 text-white rounded bg-emerald-600 hover:bg-emerald-700">
                     Save
                 </button>
             </div>
@@ -37,7 +55,7 @@
     </div>
 </div>
 
-{{--Adding modal--}}
+{{-- Adding modal --}}
 <script>
     function openAddPositionModal() {
         document.getElementById('addPositionModal').classList.remove('hidden');

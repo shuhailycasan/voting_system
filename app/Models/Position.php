@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Position extends Model
 {
-    protected $fillable = ['name','type','max_votes'];
+    protected $fillable = ['name','type','max_votes','order'];
     public  function candidates()
     {
        return $this->hasMany(Candidate::class);

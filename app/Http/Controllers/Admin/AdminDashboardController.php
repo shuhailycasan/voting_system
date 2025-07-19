@@ -14,27 +14,23 @@ use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
 
-
 class AdminDashboardController extends Controller
 {
     public function ManageCandidates(Request $request)
     {
-
         $search = $request->input('search');
 
         $candidatesAll = Candidate::with('position')
             ->where(function ($query) use ($search) {
-                $query->whereHas('position', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%");
-                })
+                $query
+                    ->whereHas('position', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('name', 'like', "%$search%");
             })
-            ->paginate(10);
-
-
+            ->paginate(5);
 
         $positionsAll = Position::paginate(5);
-
 
         return view('Admin.features.candidate-manage', compact('candidatesAll', 'search', 'positionsAll'));
     }
@@ -49,16 +45,20 @@ class AdminDashboardController extends Controller
 
         $candidate = new Candidate();
         $candidate->name = $request->name;
-        $candidate->position_id= $request->position_id;
+        $candidate->position_id = $request->position_id;
         $candidate->save();
 
         if ($request->hasFile('photo')) {
-            $candidate->addMediaFromRequest('photo')->toMediaCollection('candidate_photo');
+            try {
+                $candidate->addMediaFromRequest('photo')->toMediaCollection('candidate_photo');
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.candidate.table')
+                    ->with('error', 'Candidate saved, but image upload failed: ' . $e->getMessage());
+            }
         }
 
-        return redirect()
-            ->route('admin.candidate.table')
-            ->with('success', 'Candidate added successfully!');
+        return redirect()->route('admin.candidate.table')->with('success', 'Candidate added successfully!');
     }
 
     public function addPositions(Request $request)
@@ -66,7 +66,8 @@ class AdminDashboardController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:single,multiple',
-            'max_votes' => 'required|integer|min:1'
+            'max_votes' => 'required|integer|min:1',
+            'order' => 'required|integer',
         ]);
 
         $position = new Position();
@@ -75,30 +76,27 @@ class AdminDashboardController extends Controller
         $position->max_votes = $request->max_votes;
         $position->save();
 
-        return redirect()
-            ->route('admin.candidate.table')
-            ->with('success', 'Position added successfully!');
+        return redirect()->route('admin.candidate.table')->with('success', 'Position added successfully!');
     }
 
-//    public function ManagePosition(Request $request)
-//    {
-//
-//        $search_position = $request->input('search');
-//
-//        $positionAll = Position::query()
-//            ->when($search_position, function ($query, $search) {
-//                $query->where('name', 'like', '%' . $search . '%')
-//                    ->orWhere('type', 'like', '%' . $search . '%');
-//            })->paginate(5);
-//
-//
-//        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
-//    }
-
+    //    public function ManagePosition(Request $request)
+    //    {
+    //
+    //        $search_position = $request->input('search');
+    //
+    //        $positionAll = Position::query()
+    //            ->when($search_position, function ($query, $search) {
+    //                $query->where('name', 'like', '%' . $search . '%')
+    //                    ->orWhere('type', 'like', '%' . $search . '%');
+    //            })->paginate(5);
+    //
+    //
+    //        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
+    //    }
 
     public function updateCandidate(Request $request, $id)
     {
-        \Log::info("UpdateCandidate hit", $request->all());
+        \Log::info('UpdateCandidate hit', $request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -123,12 +121,13 @@ class AdminDashboardController extends Controller
 
     public function updatePosition(Request $request, $id)
     {
-        \Log::info("updatePosition hit", $request->all());
+        \Log::info('updatePosition hit', $request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:single,multiple',
             'max_votes' => 'required|integer|min:1',
+            'order' => 'required|integer',
         ]);
 
         $position = Position::findOrFail($id);
@@ -137,11 +136,11 @@ class AdminDashboardController extends Controller
             'name' => $validated['name'],
             'type' => $validated['type'],
             'max_votes' => $validated['max_votes'],
+            'order' => $validated['order'],
         ]);
 
         return redirect()->back()->with('success', 'Position updated successfully.');
     }
-
 
     public function deleteCandidates($id)
     {
@@ -156,8 +155,7 @@ class AdminDashboardController extends Controller
 
         $delCandidate->delete();
 
-        return redirect()->route('admin.candidate.table')
-            ->with('deleted', 'Candidate deleted successfully!');
+        return redirect()->route('admin.candidate.table')->with('deleted', 'Candidate deleted successfully!');
     }
     public function deletePositions($id)
     {
@@ -172,14 +170,12 @@ class AdminDashboardController extends Controller
 
         $delPosition->delete();
 
-        return redirect()->route('admin.candidate.table')
-            ->with('deleted', 'Position deleted successfully!');
+        return redirect()->route('admin.candidate.table')->with('deleted', 'Position deleted successfully!');
     }
 
     public function showDashboard()
     {
         $candidates = Candidate::withCount('votes')->get();
-
 
         $labels = $candidates->pluck('name');
         $data = $candidates->pluck('candidate_id');
@@ -189,11 +185,7 @@ class AdminDashboardController extends Controller
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
         //TIME
-        $votesByHour = User::whereNotNull('voted_at')
-            ->get()
-            ->groupBy(fn($user) => Carbon::parse($user->voted_at)->format('H:00'))
-            ->map(fn($group) => $group->count())
-            ->sortKeys();
+        $votesByHour = User::whereNotNull('voted_at')->get()->groupBy(fn($user) => Carbon::parse($user->voted_at)->format('H:00'))->map(fn($group) => $group->count())->sortKeys();
 
         //Total Candidates
         $totalCandidates = Candidate::count();
@@ -201,50 +193,39 @@ class AdminDashboardController extends Controller
         //Still not voted
         $notVotedUsers = $totalVoters - $votedCount;
 
-        $groupedCandidates = $candidates->groupBy(fn ($c) => $c->position->name ?? 'No position');
+        $groupedCandidates = $candidates->groupBy(fn($c) => $c->position->name ?? 'No position');
 
-        return view('Admin.features.dash-charts', compact('labels', 'data',
-            'totalVoters', 'votedCount', 'candidates',
-            'groupedCandidates', 'notVotedUsers', 'totalCandidates','votesByHour'));
+        return view('Admin.features.dash-charts', compact('labels', 'data', 'totalVoters', 'votedCount', 'candidates', 'groupedCandidates', 'notVotedUsers', 'totalCandidates', 'votesByHour'));
     }
 
     public function ManageUsers(Request $request)
     {
-
         $search = request('search_users');
-        $page = request('page',1);
+        $page = request('page', 1);
 
-        $cachekey = "users_page_{$page}_search_". md5($search);
+        $cachekey = "users_page_{$page}_search_" . md5($search);
 
-
-        $usersAll = Cache::remember ($cachekey, now()->addMinutes(5), function () use ($search) {
+        $usersAll = Cache::remember($cachekey, now()->addMinutes(5), function () use ($search) {
             return User::query()
                 ->when($search, function ($query, $search) {
-                    $query->where('code', 'like', '%' . $search . '%')
-                        ->orWhere('role', 'like', '%' . $search . '%');
-                })->paginate(5);
+                    $query->where('code', 'like', '%' . $search . '%')->orWhere('role', 'like', '%' . $search . '%');
+                })
+                ->paginate(5);
         });
 
-
         return view('Admin.features.users-manage', compact('usersAll', 'search'));
-
     }
 
     public function showRankings()
     {
-        $candidates = Candidate::withCount('votes')
-            ->orderBy('position')
-            ->orderByDesc('votes_count')
-            ->get();
+        // Fetch all positions ordered by `order`
+        $positions = Position::orderBy('order')->get();
 
-        $grouped = $candidates->groupBy('position');
+        // Preload candidates for each position, sorted by votes
+        $groupedRankings = $positions->mapWithKeys(function ($position) {
+            $candidates = $position->candidates()->withCount('votes')->orderByDesc('votes_count')->get();
 
-        // Define your preferred order
-        $positionOrder = ['President', 'Vice-President', 'Secretary', 'business_manager'];
-
-        // Reorder grouped collection
-        $groupedRankings = collect($positionOrder)->mapWithKeys(function ($position) use ($grouped) {
-            return [$position => $grouped->get($position, collect())];
+            return [$position->name => $candidates];
         });
 
         return view('Admin.features.rankings', compact('groupedRankings'));
@@ -252,13 +233,13 @@ class AdminDashboardController extends Controller
 
     public function exportUsers()
     {
-        return Excel::download(new UsersExport, 'users.xlsx');
+        return Excel::download(new UsersExport(), 'users.xlsx');
     }
 
     public function importVoters(Request $request)
     {
         $request->validate([
-            'voters_file' => 'required|file|mimes:csv,txt'
+            'voters_file' => 'required|file|mimes:csv,txt',
         ]);
 
         $file = $request->file('voters_file');
@@ -280,6 +261,4 @@ class AdminDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Voters codes imported successfully!');
     }
-
 }
-

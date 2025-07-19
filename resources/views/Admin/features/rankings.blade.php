@@ -1,13 +1,13 @@
 @extends('Admin.dashboard')
 
 @section('content')
-    <div class="p-4 sm:ml-64 min-h-screen">
-        <h1 class="text-2xl font-bold mb-6 text-center">Candidate Rankings</h1>
+    <div class="min-h-screen p-4 sm:ml-64">
+        <h1 class="mb-6 text-2xl font-bold text-center">Candidate Rankings</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($groupedRankings as $position => $candidates)
-                <div class="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800">
-                    <h2 class="text-xl font-semibold mb-4 text-emerald-600 dark:text-white text-center">
+                <div class="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <h2 class="mb-4 text-xl font-semibold text-center text-emerald-600 dark:text-white">
                         {{ $position }}
                     </h2>
 
@@ -24,11 +24,11 @@
                                 <div class="flex-shrink-0">
                                     @if ($candidate->hasMedia('candidate_photo'))
                                         <img src="{{ $candidate->getFirstMediaUrl('candidate_photo') }}"
-                                             alt="{{ $candidate->name }}"
-                                             class="w-12 h-12 rounded-full object-cover border-2 border-white shadow" />
+                                            alt="{{ $candidate->name }}"
+                                            class="object-cover w-12 h-12 border-2 border-white rounded-full shadow" />
                                     @else
                                         <div
-                                            class="w-12 h-12 rounded-full bg-gray-300 text-white flex items-center justify-center text-sm font-bold">
+                                            class="flex items-center justify-center w-12 h-12 text-sm font-bold text-white bg-gray-300 rounded-full">
                                             ?
                                         </div>
                                     @endif
@@ -39,16 +39,17 @@
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
                                         {{ $candidate->name }}
                                     </h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300">Votes: {{ $candidate->votes_count }}</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                                        Votes: {{ $candidate->votes_count }}
+                                    </p>
                                 </div>
                             </li>
                         @empty
-                            <li class="text-gray-400 text-sm text-center">No candidates</li>
+                            <li class="text-sm text-center text-gray-400">No candidates</li>
                         @endforelse
                     </ol>
                 </div>
             @endforeach
         </div>
     </div>
-
 @endsection

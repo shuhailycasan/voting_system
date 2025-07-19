@@ -2,29 +2,29 @@
 
 
 @section('content')
-    <div class=" sm:ml-45 min-h-screen">
-        <h1 class="text-2xl font-bold text-center text-emerald-700 dark:text-emerald-400 m-2">Candidates Chart</h1>
+    <div class="min-h-screen  sm:ml-45">
+        <h1 class="m-2 text-2xl font-bold text-center text-emerald-700 dark:text-emerald-400">Candidates Chart</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 mb-3">
+        <div class="grid grid-cols-1 gap-4 mt-6 mb-3 md:grid-cols-2 lg:grid-cols-3">
             @foreach($groupedCandidates as $position => $candidates)
                 @php
                     $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
                 @endphp
 
-                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-                    <h2 class="text-md font-semibold text-center text-emerald-600">{{ $position }}</h2>
+                <div class="p-4 bg-white rounded shadow dark:bg-gray-800">
+                    <h2 class="font-semibold text-center text-md text-emerald-600">{{ $position }}</h2>
                     <canvas id="chart-{{ \Str::slug($position) }}"></canvas>
                 </div>
             @endforeach
         </div>
 
 
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-6 border border-gray-200">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg">
-                <h2 class="text-xl font-bold text-emerald-700 dark:text-emerald-400 mb-4">INSIGHT</h2>
+        <div class="grid w-full grid-cols-1 gap-6 mt-8 mb-6 border border-gray-200 md:grid-cols-2">
+            <div class="p-6 bg-white rounded shadow-lg dark:bg-gray-800">
+                <h2 class="mb-4 text-xl font-bold text-emerald-700 dark:text-emerald-400">INSIGHT</h2>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                <div class="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
+                    <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
                         <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voter Participation</h2>
                         <canvas id="voterParticipationChart" height="200"></canvas>
 
@@ -36,7 +36,7 @@
                     </div>
 
 
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                    <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
                         <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voting Activity Over Time</h2>
                         <canvas id="votingTrendChart" height="150"></canvas>
                     </div>
@@ -71,7 +71,7 @@
                                 legend: { display: false },
                                 title: {
                                     display: true,
-                                    text: '{{ $position }} Top 3'
+                                    text: '{{ $position }} Top Candidates'
                                 }
                             },
                             scales: {
