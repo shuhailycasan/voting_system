@@ -10,7 +10,8 @@
                 </h1>
             </div>
 
-            <div class="grid grid-cols-1 border-t border-gray-100 gap-4 mt-6 mb-3 shadow-lg md:grid-cols-2 lg:grid-cols-3">
+            <div
+                class="grid grid-cols-1 border-t border-gray-100 gap-4 mt-6 mb-3 shadow-lg md:grid-cols-2 lg:grid-cols-3">
                 @foreach($groupedCandidates as $position => $candidates)
                     @php
                         $topCandidates = $candidates->sortByDesc('votes_count')->take(3);

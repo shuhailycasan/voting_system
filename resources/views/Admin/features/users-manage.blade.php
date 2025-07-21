@@ -45,7 +45,8 @@
             {{-- Table --}}
             <div class="overflow-x-auto">
                 <table class="min-w-[700px] w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase border border-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                    <thead
+                        class="text-xs text-gray-700 uppercase border border-gray-100 dark:bg-gray-700 dark:text-gray-400">
                     <tr class="text-center">
                         <th scope="col" class="px-6 py-3 w-40">Voter Codes</th>
                         <th scope="col" class="px-6 py-3 w-40">Has Voted?</th>
@@ -62,7 +63,8 @@
                                 @if ($userAll->voted)
                                     <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">Yes</span>
                                 @else
-                                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">No</span>
+                                    <span
+                                        class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">No</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">{{ $userAll->voted_at }}</td>

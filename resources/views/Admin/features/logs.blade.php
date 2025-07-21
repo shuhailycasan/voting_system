@@ -12,11 +12,14 @@
 
                 <div class="px-4 pb-4">
                     <form method="GET" action="{{ route('admin.logs.index') }}" class="flex flex-wrap gap-3 mb-4">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search log name or description"
-                               class="border p-2 rounded text-sm" />
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Search log name or description"
+                               class="border p-2 rounded text-sm"/>
 
-                        <input type="date" name="start_date" value="{{ request('start_date') }}" class="border p-2 rounded text-sm" />
-                        <input type="date" name="end_date" value="{{ request('end_date') }}" class="border p-2 rounded text-sm" />
+                        <input type="date" name="start_date" value="{{ request('start_date') }}"
+                               class="border p-2 rounded text-sm"/>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}"
+                               class="border p-2 rounded text-sm"/>
 
                         <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Filter</button>
                         <a href="logs" class="bg-gray-300 text-black px-4 py-2 rounded">Reset</a>
