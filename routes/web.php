@@ -92,6 +92,9 @@ Route::controller(AdminDashboardController::class)->group(function () {
     Route::get('/admin/export/candidates','exportCandidates')->name('admin.export.candidates');
     Route::get('/admin/export/positions','exportPositions')->name('admin.export.positions');
 
+    //Generates 6-code
+    Route::post('/admin/generate-code', 'generateCode')->name('admin.users.generate-code');
+
 
     Route::get('/admin/rankings', 'showRankings')->name('admin.rankings');
 

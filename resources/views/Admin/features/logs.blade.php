@@ -1,10 +1,14 @@
 @extends('Admin.dashboard')
 
 @section('content')
-    <div class="px-4 py-6 border border-emerald-400">
-        <div class="max-w-full overflow-x-auto lg:max-w-[1200px] lg:mx-auto">
-            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                <h2 class="text-xl md:text-2xl font-bold mb-4 px-4 pt-4">Activity Logs</h2>
+    <div class="px-4 py-6">
+        <div class="bg-white rounded-lg max-w-full overflow-x-auto lg:max-w-[1200px] lg:mx-auto">
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <div class="py-6">
+                    <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                        Activity Logs
+                    </h1>
+                </div>
 
                 <div class="px-4 pb-4">
                     <form method="GET" action="{{ route('admin.logs.index') }}" class="flex flex-wrap gap-3 mb-4">
@@ -22,7 +26,7 @@
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white dark:bg-gray-800 text-sm md:text-base">
                         <thead>
-                        <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm">
+                        <tr class="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm">
                             <th class="p-3 text-left whitespace-nowrap">Date</th>
                             <th class="p-3 text-left whitespace-nowrap">Role</th>
                             <th class="p-3 text-left whitespace-nowrap">Action</th>
@@ -55,7 +59,7 @@
                     </table>
                 </div>
 
-                {{-- 📄 Pagination --}}
+                {{-- Pagination --}}
                 <div class="mt-4 px-4 pb-4">
                     {{ $logs->appends(request()->query())->links() }}
                 </div>

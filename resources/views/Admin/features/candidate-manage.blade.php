@@ -2,13 +2,16 @@
 
 
 @section('content')
-    <div class="min-h-screen px-4 py-6 transition-all duration-300 lg:ml-64">
-        <div class="py-4 text-xl font-bold text-center sm:text-2xl">
-            <h1>List of All Candidates</h1>
-        </div>
+    <div class=" px-4 py-6 transition-all duration-300 bg-gray-100 lg:ml-64">
 
+        <div class="container border-1 border-gray-200 bg-white side mb-4 rounded-xl p-3">
         <!-- Search + Buttons -->
-        <div class="flex flex-col items-start justify-between gap-4 px-4 mb-4 lg:flex-row lg:items-center">
+        <div class="flex flex-col items-start justify-between gap-4 px-4 bg-white  lg:flex-row lg:items-center">
+            <div class="py-6">
+                <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                    List of Candidates
+                </h1>
+            </div>
             <!-- Search Form -->
             <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex w-full lg:w-auto">
                 @csrf
@@ -31,6 +34,7 @@
                         class="px-4 py-2 text-white transition rounded bg-emerald-600 hover:bg-emerald-700">
                     + Add Candidate
                 </button>
+
             </div>
             @if (session('success'))
                 <div class="p-2 text-green-800 bg-green-200 rounded">{{ session('success') }}</div>
@@ -46,7 +50,7 @@
             <div class="inline-block min-w-full align-middle">
 
                 <table class="min-w-full text-sm text-left text-gray-500 table-auto dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-white dark:bg-gray-700 dark:text-gray-400">
                     <tr class="text-center">
                         <th class="px-6 py-3">Photo</th>
                         <th class="px-6 py-3">Name</th>
@@ -108,12 +112,17 @@
                 </div>
             </div>
         </div>
-        <div class="py-4 text-xl font-bold text-center sm:text-2xl">
-            <h1>List of All Positions</h1>
         </div>
 
+
+        <div class="container border-1 border-gray-200 bg-white side mb-4 rounded-xl p-3">
         <!-- Search + Buttons -->
-        <div class="flex flex-col items-start justify-between gap-4 px-4 mb-4 lg:flex-row lg:items-center">
+        <div class="flex flex-col items-start justify-between  bg-white gap-4 px-4 mb-4 lg:flex-row lg:items-center">
+            <div class="py-6">
+                <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                    List of Positions
+                </h1>
+            </div>
             <!-- Search Form -->
             <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex w-full lg:w-auto">
                 @csrf
@@ -149,8 +158,8 @@
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <table class="min-w-full text-sm text-left text-gray-500 table-auto dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                    <tr class="text-center">
+                    <thead class="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
+                    <tr class="text-center bg-white">
                         <th class="px-6 py-3">Position Name</th>
                         <th class="px-6 py-3">Position Type</th>
                         <th class="px-6 py-3">Max Vote</th>
@@ -205,6 +214,7 @@
                     {{ $positionsAll->appends(['search' => request('search')])->links() }}
                 </div>
             </div>
+        </div>
         </div>
 
         <!--MODALS-->

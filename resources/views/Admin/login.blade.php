@@ -8,51 +8,47 @@
 </head>
 <body>
 
-<div class="flex justify-center items-center min-h-screen border border-emerald-400">
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">For Admin Only</h2>
+<div class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
+    <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6 border border-emerald-600">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Admin Panel</h2>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Restricted access only</p>
         </div>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            @if (session('error'))
-                <p class="text-red-600">{{ session('error') }}</p>
-            @endif
-            <form action="{{ route('admin.login.submit') }}" class="space-y-6" method="POST">
-                @csrf
-                <div>
-                    <label for="name" class="block text-sm/6 font-medium text-gray-900">Admin Name</label>
-                    <div class="mt-2">
-                        <input type="name" name="name" id="name" autocomplete="name" required
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-emerald-600 sm:text-sm/6"/>
-                    </div>
-                </div>
+        @if (session('error'))
+            <div class="text-sm text-red-600 text-center font-medium">
+                {{ session('error') }}
+            </div>
+        @endif
 
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-                        <div class="text-sm">
-                            <a href="#" class="font-semibold text-emerald-600 hover:text-emerald-500">Forgot
-                                password?</a>
-                        </div>
-                    </div>
-                    <div class="mt-2">
-                        <input type="password" name="password" id="password" autocomplete="current-password" required
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-emerald-600 sm:text-sm/6"/>
-                    </div>
-                </div>
+        <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-5">
+            @csrf
 
-                <div>
-                    <button type="submit"
-                            class="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
-                        Sign in
-                    </button>
-                </div>
-            </form>
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Admin Name</label>
+                <input type="text" name="name" id="name" autocomplete="name" required
+                       class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+            </div>
 
-        </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
+                <input type="password" name="password" id="password" autocomplete="current-password" required
+                       class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                <div class="mt-2 text-right">
+                    <a href="#" class="text-sm text-emerald-600 hover:text-emerald-500 font-medium">Forgot password?</a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center items-center rounded-md bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-white font-semibold text-sm shadow-md transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600">
+                    Sign in
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
 
 </body>
 </html>

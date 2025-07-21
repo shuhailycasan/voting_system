@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\CandidatesExport;
+use App\Exports\PositionsExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VoterCodeImport;
@@ -17,6 +18,8 @@ use Spatie\Activitylog\Models\Activity;
 
 class AdminDashboardController extends Controller
 {
+
+//    CRUD FOR CANDIDATES
     public function ManageCandidates(Request $request)
     {
         $search = $request->input('search');
@@ -62,39 +65,6 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.candidate.table')->with('success', 'Candidate added successfully!');
     }
 
-    public function addPositions(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:single,multiple',
-            'max_votes' => 'required|integer|min:1',
-            'order' => 'required|integer',
-        ]);
-
-        $position = new Position();
-        $position->name = $request->name;
-        $position->type = $request->type;
-        $position->max_votes = $request->max_votes;
-        $position->save();
-
-        return redirect()->route('admin.candidate.table')->with('success', 'Position added successfully!');
-    }
-
-    //    public function ManagePosition(Request $request)
-    //    {
-    //
-    //        $search_position = $request->input('search');
-    //
-    //        $positionAll = Position::query()
-    //            ->when($search_position, function ($query, $search) {
-    //                $query->where('name', 'like', '%' . $search . '%')
-    //                    ->orWhere('type', 'like', '%' . $search . '%');
-    //            })->paginate(5);
-    //
-    //
-    //        return view('Admin.features.candidate-manage', compact('positionAll', 'search_position'));
-    //    }
-
     public function updateCandidate(Request $request, $id)
     {
         \Log::info('UpdateCandidate hit', $request->all());
@@ -120,6 +90,42 @@ class AdminDashboardController extends Controller
         return redirect()->back()->with('success', 'Candidate updated successfully.');
     }
 
+    public function deleteCandidates($id)
+    {
+        $delCandidate = Candidate::findOrFail($id);
+
+        // Log the delete activity BEFORE deleting
+        activity()
+            ->causedBy(auth()->user()) // who did it
+            ->performedOn($delCandidate) // what was affected
+            ->withProperties(['candidate_name' => $delCandidate->name, 'position' => $delCandidate->position])
+            ->log("Deleted candidate {$delCandidate->name}");
+
+        $delCandidate->delete();
+
+        return redirect()->route('admin.candidate.table')->with('deleted', 'Candidate deleted successfully!');
+    }
+
+
+    //CRUD FOR POSITIONS
+    public function addPositions(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:single,multiple',
+            'max_votes' => 'required|integer|min:1',
+            'order' => 'required|integer',
+        ]);
+
+        $position = new Position();
+        $position->name = $request->name;
+        $position->type = $request->type;
+        $position->max_votes = $request->max_votes;
+        $position->save();
+
+        return redirect()->route('admin.candidate.table')->with('success', 'Position added successfully!');
+    }
+
     public function updatePosition(Request $request, $id)
     {
         \Log::info('updatePosition hit', $request->all());
@@ -143,21 +149,6 @@ class AdminDashboardController extends Controller
         return redirect()->back()->with('success', 'Position updated successfully.');
     }
 
-    public function deleteCandidates($id)
-    {
-        $delCandidate = Candidate::findOrFail($id);
-
-        // Log the delete activity BEFORE deleting
-        activity()
-            ->causedBy(auth()->user()) // who did it
-            ->performedOn($delCandidate) // what was affected
-            ->withProperties(['candidate_name' => $delCandidate->name, 'position' => $delCandidate->position])
-            ->log("Deleted candidate {$delCandidate->name}");
-
-        $delCandidate->delete();
-
-        return redirect()->route('admin.candidate.table')->with('deleted', 'Candidate deleted successfully!');
-    }
     public function deletePositions($id)
     {
         $delPosition = Position::findOrFail($id);
@@ -174,6 +165,39 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.candidate.table')->with('deleted', 'Position deleted successfully!');
     }
 
+    //CRUD FOR USERS
+    public function ManageUsers(Request $request)
+    {
+        $search = request('search_users');
+        $page = request('page', 1);
+
+
+        $usersAll = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where('code', 'like', '%' . $search . '%')
+                    ->orWhere('role', 'like', '%' . $search . '%');
+            })
+            ->paginate(5,['*'],'voterspage');
+        return view('Admin.features.users-manage', compact('usersAll', 'search'));
+    }
+    public function generateCode()
+    {
+        do{
+            $code = str_pad(rand(0,999999), 6, '0', STR_PAD_LEFT);
+        }while(User::where('code', $code)->exists());
+
+        $user = User::create([
+            'code' => $code,
+            'role' => 'voter',
+        ]);
+
+        return back()->with('success', "New voter created with code {$code} and ID {$user->id}");
+
+    }
+
+
+
+    //DASHBOARD
     public function showDashboard()
     {
         $candidates = Candidate::withCount('votes')->get();
@@ -197,24 +221,6 @@ class AdminDashboardController extends Controller
         $groupedCandidates = $candidates->groupBy(fn($c) => $c->position->name ?? 'No position');
 
         return view('Admin.features.dash-charts', compact('labels', 'data', 'totalVoters', 'votedCount', 'candidates', 'groupedCandidates', 'notVotedUsers', 'totalCandidates', 'votesByHour'));
-    }
-
-    public function ManageUsers(Request $request)
-    {
-        $search = request('search_users');
-        $page = request('page', 1);
-
-        $cachekey = "users_page_{$page}_search_" . md5($search);
-
-        $usersAll = Cache::remember($cachekey, now()->addMinutes(5), function () use ($search) {
-            return User::query()
-                ->when($search, function ($query, $search) {
-                    $query->where('code', 'like', '%' . $search . '%')->orWhere('role', 'like', '%' . $search . '%');
-                })
-                ->paginate(5);
-        });
-
-        return view('Admin.features.users-manage', compact('usersAll', 'search'));
     }
 
     public function showRankings()

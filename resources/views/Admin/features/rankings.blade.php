@@ -2,11 +2,16 @@
 
 @section('content')
     <div class="min-h-screen p-4 sm:ml-64">
-        <h1 class="mb-6 text-2xl font-bold text-center">Candidate Rankings</h1>
+        <div class="container border-1 border-gray-200 bg-white side mb-4 rounded-xl p-3">
+        <div class="py-6">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                Rankings
+            </h1>
+        </div>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1  gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($groupedRankings as $position => $candidates)
-                <div class="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+                <div class="p-6 bg-white border-t border-gray-100 rounded-lg shadow-lg dark:bg-gray-800">
                     <h2 class="mb-4 text-xl font-semibold text-center text-emerald-600 dark:text-white">
                         {{ $position }}
                     </h2>
@@ -50,6 +55,7 @@
                     </ol>
                 </div>
             @endforeach
+        </div>
         </div>
     </div>
 @endsection

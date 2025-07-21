@@ -3,48 +3,54 @@
 
 @section('content')
     <div class="min-h-screen  sm:ml-45">
-        <h1 class="m-2 text-2xl font-bold text-center text-emerald-700 dark:text-emerald-400">Candidates Chart</h1>
+        <div class="container bg-white side m-4 rounded-xl p-3 ">
+            <div class="py-6">
+                <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                    Dashboard
+                </h1>
+            </div>
 
-        <div class="grid grid-cols-1 gap-4 mt-6 mb-3 md:grid-cols-2 lg:grid-cols-3">
-            @foreach($groupedCandidates as $position => $candidates)
-                @php
-                    $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
-                @endphp
+            <div class="grid grid-cols-1 border-t border-gray-100 gap-4 mt-6 mb-3 shadow-lg md:grid-cols-2 lg:grid-cols-3">
+                @foreach($groupedCandidates as $position => $candidates)
+                    @php
+                        $topCandidates = $candidates->sortByDesc('votes_count')->take(3);
+                    @endphp
 
-                <div class="p-4 bg-white rounded shadow dark:bg-gray-800">
-                    <h2 class="font-semibold text-center text-md text-emerald-600">{{ $position }}</h2>
-                    <canvas id="chart-{{ \Str::slug($position) }}"></canvas>
-                </div>
-            @endforeach
-        </div>
+                    <div class="p-4 bg-white rounded shadow dark:bg-gray-800">
+                        <h2 class="font-semibold text-center text-md text-emerald-600">{{ $position }}</h2>
+                        <canvas id="chart-{{ \Str::slug($position) }}"></canvas>
+                    </div>
+                @endforeach
+            </div>
 
 
-        <div class="grid w-full grid-cols-1 gap-6 mt-8 mb-6 border border-gray-200 md:grid-cols-2">
-            <div class="p-6 bg-white rounded shadow-lg dark:bg-gray-800">
-                <h2 class="mb-4 text-xl font-bold text-emerald-700 dark:text-emerald-400">INSIGHT</h2>
+            <div class="grid w-full grid-cols-1 gap-6 mt-8 mb-6 border border-gray-200 md:grid-cols-2">
+                <div class="p-6 bg-white rounded shadow-lg dark:bg-gray-800">
+                    <h2 class="mb-4 text-xl font-bold text-emerald-700 dark:text-emerald-400">INSIGHT</h2>
 
-                <div class="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
-                    <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voter Participation</h2>
-                        <canvas id="voterParticipationChart" height="200"></canvas>
+                    <div class="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
+                        <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
+                            <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voter Participation</h2>
+                            <canvas id="voterParticipationChart" height="200"></canvas>
 
-                        <div class="mt-4 text-center">
+                            <div class="mt-4 text-center">
                         <span id="voterParticipationRate" class="text-2xl font-bold text-emerald-600">
                             {{-- This gets updated dynamically --}}
                         </span>
+                            </div>
                         </div>
+
+
+                        <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
+                            <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voting Activity Over
+                                Time</h2>
+                            <canvas id="votingTrendChart" height="150"></canvas>
+                        </div>
+
                     </div>
-
-
-                    <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
-                        <h2 class="text-lg font-semibold text-gray-700 dark:text-white">Voting Activity Over Time</h2>
-                        <canvas id="votingTrendChart" height="150"></canvas>
-                    </div>
-
                 </div>
             </div>
         </div>
-
     </div>
 
     @push('scripts')
@@ -68,14 +74,14 @@
                             indexAxis: 'y',
                             responsive: true,
                             plugins: {
-                                legend: { display: false },
+                                legend: {display: false},
                                 title: {
                                     display: true,
                                     text: '{{ $position }} Top Candidates'
                                 }
                             },
                             scales: {
-                                x: { beginAtZero: true }
+                                x: {beginAtZero: true}
                             }
                         }
                     });
@@ -84,57 +90,8 @@
             });
         </script>
     @endpush
-{{--    @php--}}
-{{--        $colors = [--}}
-{{--            'President' => 'rgba(255, 99, 132, 0.6)', // Red--}}
-{{--            'Vice President' => 'rgba(54, 162, 235, 0.6)', // Blue--}}
-{{--            'Secretary' => 'rgba(255, 206, 86, 0.6)', // Yellow--}}
-{{--            'Treasurer' => 'rgba(75, 192, 192, 0.6)', // Teal--}}
-{{--        ];--}}
-{{--    @endphp--}}
 
-
-{{--    <script>--}}
-{{--        const colors = @json($colors);--}}
-
-{{--        document.addEventListener('DOMContentLoaded', function () {--}}
-{{--            @foreach ($groupedCandidates as $position => $candidates)--}}
-{{--            const ctx_{{ Str::slug($position, '_') }} = document.getElementById('chart-{{ Str::slug($position) }}')?.getContext('2d');--}}
-
-{{--            if (ctx_{{ Str::slug($position, '_') }}) {--}}
-{{--                new Chart(ctx_{{ Str::slug($position, '_') }}, {--}}
-{{--                    type: 'bar',--}}
-{{--                    data: {--}}
-{{--                        labels: @json($candidates->pluck('name')),--}}
-{{--                        datasets: [{--}}
-{{--                            label: 'Votes for {{ $position }}',--}}
-{{--                            data: @json($candidates->pluck('votes_count')),--}}
-{{--                            backgroundColor: colors["{{ $position }}"] ?? 'rgba(16, 185, 129, 0.6)',--}}
-{{--                            borderColor: 'rgba(5, 150, 105, 1)',--}}
-{{--                            borderWidth: 1,--}}
-{{--                            borderRadius: 5,--}}
-{{--                        }]--}}
-{{--                    },--}}
-{{--                    options: {--}}
-{{--                        responsive: true,--}}
-{{--                        // indexAxis: 'y',--}}
-{{--                        scales: {--}}
-{{--                            y: {--}}
-{{--                                beginAtZero: true,--}}
-{{--                                ticks: {--}}
-{{--                                    stepSize: 1--}}
-{{--                                }--}}
-{{--                            }--}}
-{{--                        }--}}
-{{--                    }--}}
-{{--                });--}}
-{{--            }--}}
-{{--            @endforeach--}}
-{{--        });--}}
-{{--    </script>--}}
-
-
-{{--   VOTERS PARTICIPATION CHARTS --}}
+    {{--   VOTERS PARTICIPATION CHARTS --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const voted = {{ $votedCount }};
@@ -185,36 +142,36 @@
         });
     </script>
 
-{{--    <script>--}}
-{{--        document.addEventListener('DOMContentLoaded', function () {--}}
-{{--            new Chart(document.getElementById('chart-{{ \Str::slug($position) }}'), {--}}
-{{--                type: 'bar',--}}
-{{--                data: {--}}
-{{--                    labels: {!! $labels->toJson() !!},--}}
-{{--                    datasets: [{--}}
-{{--                        label: 'Votes',--}}
-{{--                        data: {!! $votes->toJson() !!},--}}
-{{--                        backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'] // gold, silver, bronze--}}
-{{--                        borderRadius: 8,--}}
-{{--                    }]--}}
-{{--                },--}}
-{{--                options: {--}}
-{{--                    indexAxis: 'y', // Horizontal bars--}}
-{{--                    responsive: true,--}}
-{{--                    plugins: {--}}
-{{--                        legend: {display: false},--}}
-{{--                        title: {--}}
-{{--                            display: true,--}}
-{{--                            text: '{{ $position }} Top 3'--}}
-{{--                        }--}}
-{{--                    },--}}
-{{--                    scales: {--}}
-{{--                        x: {beginAtZero: true}--}}
-{{--                    }--}}
-{{--                }--}}
-{{--            });--}}
-{{--        });--}}
-{{--    </script>--}}
+    {{--    <script>--}}
+    {{--        document.addEventListener('DOMContentLoaded', function () {--}}
+    {{--            new Chart(document.getElementById('chart-{{ \Str::slug($position) }}'), {--}}
+    {{--                type: 'bar',--}}
+    {{--                data: {--}}
+    {{--                    labels: {!! $labels->toJson() !!},--}}
+    {{--                    datasets: [{--}}
+    {{--                        label: 'Votes',--}}
+    {{--                        data: {!! $votes->toJson() !!},--}}
+    {{--                        backgroundColor: ['#FFD700', '#C0C0C0', '#CD7F32'] // gold, silver, bronze--}}
+    {{--                        borderRadius: 8,--}}
+    {{--                    }]--}}
+    {{--                },--}}
+    {{--                options: {--}}
+    {{--                    indexAxis: 'y', // Horizontal bars--}}
+    {{--                    responsive: true,--}}
+    {{--                    plugins: {--}}
+    {{--                        legend: {display: false},--}}
+    {{--                        title: {--}}
+    {{--                            display: true,--}}
+    {{--                            text: '{{ $position }} Top 3'--}}
+    {{--                        }--}}
+    {{--                    },--}}
+    {{--                    scales: {--}}
+    {{--                        x: {beginAtZero: true}--}}
+    {{--                    }--}}
+    {{--                }--}}
+    {{--            });--}}
+    {{--        });--}}
+    {{--    </script>--}}
 
 
     {{--   VOTERS TREND CHARTS --}}
@@ -281,7 +238,5 @@
             });
         });
     </script>
-
-
 
 @endsection

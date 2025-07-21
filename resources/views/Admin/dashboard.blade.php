@@ -15,9 +15,9 @@
 </head>
 <body>
 
-<div class="flex min-h-screen ">
+<div class="flex min-h-screen bg-gray-100">
 
-    <aside class=" mr-3 w-10 h-screen fixed top-0 left-0 bg-white border-r z-50">
+    <aside class=" mr-3 w-10 h-screen fixed top-0 left-0  border-r z-50">
         @include('Admin.sidebar')
     </aside>
 

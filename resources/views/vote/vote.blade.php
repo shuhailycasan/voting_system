@@ -49,10 +49,14 @@
                                         <div class="text-lg font-semibold text-gray-900 dark:text-white">
                                             {{ $candidate->name }}
                                         </div>
-                                        <input type="{{ $position->type == 'multiple' ? 'checkbox' : 'radio' }}"
+                                        <input
+                                            type="{{ $position->type == 'multiple' ? 'checkbox' : 'radio' }}"
                                             name="votes[{{ $position->id }}]{{ $position->type == 'multiple' ? '[]' : '' }}"
-                                            id="candidate_{{ $candidate->id }}" value="{{ $candidate->id }}"
-                                            class="hidden">
+                                            id="candidate_{{ $candidate->id }}"
+                                            value="{{ $candidate->id }}"
+                                            class="hidden"
+                                            data-position-name="{{ $position->name }}"
+                                        >
                                     </div>
                                 </label>
                             @endforeach
@@ -182,25 +186,27 @@
         const grouped = {};
 
         votes.forEach(input => {
-            const match = input.name.match(/votes\[([^\]]+)\]/);
-            if (!match) return; //Skip if no match
+            const positionName = input.dataset.positionName;
+            if (!positionName) return; // 💥 skip anything without a proper name
 
-            const position = match[1];
-            if (!grouped[position]) grouped[position] = [];
+            if (!grouped[positionName]) grouped[positionName] = [];
 
-            grouped[position].push(input.closest('label')?.innerText.trim());
+            const candidateName = input.closest('label')?.innerText.trim();
+            if (candidateName) grouped[positionName].push(candidateName);
         });
 
-        for (const position in grouped) {
-            const names = grouped[position].join(', ');
+        for (const positionName in grouped) {
             const li = document.createElement('li');
-            li.innerHTML = `<strong>${formatPosition(position)}:</strong> ${names}`;
+            const names = grouped[positionName].join(', ');
+            li.innerHTML = `<strong>${positionName}:</strong> ${names}`;
             summaryList.appendChild(li);
         }
 
         document.getElementById('confirmationModal').classList.remove('hidden');
         document.getElementById('confirmationModal').classList.add('flex');
     }
+
+
 
     function closeConfirmation() {
         const modal = document.getElementById('confirmationModal');

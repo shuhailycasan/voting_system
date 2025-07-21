@@ -2,16 +2,20 @@
 
 
 @section('content')
-    <div class="min-h-screen px-4 pt-6 sm:ml-64">
-        <div class="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
-            <h1 class="text-center text-2xl font-bold mb-6">List of All Users</h1>
+    <div class="min-h-screen m-4 pt-6 sm:ml-64">
+        <div class="bg-white border-1 border-gray-100  rounded-lg dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+            <div class="py-6">
+                <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
+                    List of Users
+                </h1>
+            </div>
 
             {{-- Search + Export/Import --}}
             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
                 <form action="{{ route('admin.candidate.users') }}" method="GET" class="flex w-full md:w-auto">
                     @csrf
                     <input type="text" name="search_users" value="{{ request('search') }}"
-                           placeholder="Search name or position..."
+                           placeholder="Search codes or role..."
                            class="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full md:w-auto"/>
                     <button type="submit"
                             class="bg-emerald-600 text-white px-4 rounded-r-md hover:bg-emerald-700">
@@ -21,20 +25,27 @@
 
                 <div class="flex flex-wrap justify-end gap-2">
                     <a href="{{ route('admin.export.voters') }}"
-                       class="inline-flex items-center justify-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium py-2 px-4 rounded transition">
-                        Export to Excel
+                       class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">
+                        Export Voters
                     </a>
                     <button onclick="document.getElementById('importModal').classList.remove('hidden')"
-                            class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">
-                        Import Voters
+                            class="inline-flex items-center justify-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium py-2 px-4 rounded transition">
+                        Import Codes
                     </button>
+                    <form method="POST" action="{{ route('admin.users.generate-code') }}">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium py-2 px-4 rounded transition">
+                            Generate Code
+                        </button>
+                    </form>
                 </div>
             </div>
 
             {{-- Table --}}
             <div class="overflow-x-auto">
                 <table class="min-w-[700px] w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase border border-gray-100 dark:bg-gray-700 dark:text-gray-400">
                     <tr class="text-center">
                         <th scope="col" class="px-6 py-3 w-40">Voter Codes</th>
                         <th scope="col" class="px-6 py-3 w-40">Has Voted?</th>
@@ -94,6 +105,7 @@
         @include('Admin.Modals.open-photo')
         {{-- IMPORT VOTER CODES MODAL --}}
         @include('Admin.Modals.import-voter')
+
     </div>
 
 @endsection
