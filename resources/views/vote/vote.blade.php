@@ -60,9 +60,6 @@
                     </div>
                 @endforeach
 
-
-
-
                 <div class="flex justify-center mt-10">
                     <button type="button" onclick="openConfirmation()"
                         class="w-[90%] sm:w-[600px] bg-emerald-500 hover:bg-emerald-600 text-white text-2xl font-bold py-6 px-12 rounded-2xl shadow-xl transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-emerald-300">
@@ -173,6 +170,8 @@
 
     window.addEventListener('DOMContentLoaded', highlightSelected);
 </script>
+
+
 {{-- Confirmation Modal Script --}}
 <script>
     function openConfirmation() {
@@ -183,8 +182,12 @@
         const grouped = {};
 
         votes.forEach(input => {
-            const [_, position] = input.name.match(/votes\[([^\]]+)\]/) || [];
+            const match = input.name.match(/votes\[([^\]]+)\]/);
+            if (!match) return; //Skip if no match
+
+            const position = match[1];
             if (!grouped[position]) grouped[position] = [];
+
             grouped[position].push(input.closest('label')?.innerText.trim());
         });
 

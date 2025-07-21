@@ -10,14 +10,14 @@
             <div class="mb-3">
                 <label class="block text-sm font-medium text-gray-700 dark:text-white">Name</label>
                 <input type="text" name="name" required
-                    class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
+                       class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="mb-3">
                 <label for="position_id"
-                    class="block text-sm font-medium text-gray-700 dark:text-white">Position</label>
+                       class="block text-sm font-medium text-gray-700 dark:text-white">Position</label>
                 <select name="position_id" id="position_id" required
-                    class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
+                        class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
                     <option value="" disabled selected>Select a position</option>
                     @foreach ($positionsAll as $position)
                         <option value="{{ $position->id }}">{{ $position->name }}</option>
@@ -29,13 +29,13 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-white">Photo
                     (Optional)</label>
                 <input type="file" name="photo" accept="image/jpeg,image/png" class="form-input"
-                    onchange="checkFileSize(this)"
-                    class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
+                       onchange="checkFileSize(this)"
+                       class="w-full p-2 mt-1 border border-gray-300 rounded dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="flex justify-end space-x-2">
                 <button type="button" onclick="closeAddCandidateModal()"
-                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                     Cancel
                 </button>
                 <button type="submit" class="px-4 py-2 text-white rounded bg-emerald-600 hover:bg-emerald-700">
@@ -61,11 +61,11 @@
 
 {{-- check file size --}}
 <script>
-function checkFileSize(input) {
-    const file = input.files[0];
-    if (file && file.size > 2 * 1024 * 1024) {
-        alert("Picture is too large! Max size is 2MB.");
-        input.value = ""; // Reset file input
+    function checkFileSize(input) {
+        const file = input.files[0];
+        if (file && file.size > 2 * 1024 * 1024) {
+            alert("Picture is too large! Max size is 2MB.");
+            input.value = ""; // Reset file input
+        }
     }
-}
 </script>
