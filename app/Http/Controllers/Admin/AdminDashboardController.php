@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\CandidatesExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VoterCodeImport;
@@ -28,9 +29,9 @@ class AdminDashboardController extends Controller
                     })
                     ->orWhere('name', 'like', "%$search%");
             })
-            ->paginate(5);
+            ->paginate(5, ['*'], 'candidates_page');
 
-        $positionsAll = Position::paginate(5);
+        $positionsAll = Position::paginate(5, ['*'], 'positions_page');
 
         return view('Admin.features.candidate-manage', compact('candidatesAll', 'search', 'positionsAll'));
     }
@@ -231,6 +232,9 @@ class AdminDashboardController extends Controller
         return view('Admin.features.rankings', compact('groupedRankings'));
     }
 
+
+
+    //PUBLIC FUNCTION FOR EXPORTING AND IMPORTING
     public function exportUsers()
     {
         return Excel::download(new UsersExport(), 'users.xlsx');
@@ -261,4 +265,15 @@ class AdminDashboardController extends Controller
 
         return redirect()->back()->with('success', 'Voters codes imported successfully!');
     }
+
+    public function exportCandidates()
+    {
+        return Excel::download(new CandidatesExport(), 'candidates.xlsx');
+    }
+
+    public function exportPositions()
+    {
+        return Excel::download(new PositionsExport(), 'positions.xlsx');
+    }
+
 }

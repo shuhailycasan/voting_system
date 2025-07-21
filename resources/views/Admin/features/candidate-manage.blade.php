@@ -22,18 +22,14 @@
 
             <!-- Buttons -->
             <div class="flex gap-2">
-                <a href="{{ route('admin.export.voters') }}"
+                <a href="{{ route('admin.export.candidates') }}"
                    class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium transition border rounded border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white">
-                    Export to Excel
+                    Export Candidates
                 </a>
 
                 <button onclick="openAddCandidateModal()"
                         class="px-4 py-2 text-white transition rounded bg-emerald-600 hover:bg-emerald-700">
                     + Add Candidate
-                </button>
-                <button onclick="openAddPositionModal()"
-                        class="px-4 py-2 text-white transition rounded bg-emerald-600 hover:bg-emerald-700">
-                    + Add Position
                 </button>
             </div>
             @if (session('success'))
@@ -112,7 +108,43 @@
                 </div>
             </div>
         </div>
+        <div class="py-4 text-xl font-bold text-center sm:text-2xl">
+            <h1>List of All Positions</h1>
+        </div>
 
+        <!-- Search + Buttons -->
+        <div class="flex flex-col items-start justify-between gap-4 px-4 mb-4 lg:flex-row lg:items-center">
+            <!-- Search Form -->
+            <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex w-full lg:w-auto">
+                @csrf
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="Search position name"
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"/>
+                <button type="submit" class="px-4 text-white bg-emerald-600 rounded-r-md hover:bg-emerald-700">
+                    Search
+                </button>
+            </form>
+
+            <!-- Buttons -->
+            <div class="flex gap-2">
+                <a href="{{ route('admin.export.positions') }}"
+                   class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium transition border rounded border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white">
+                    Export Positions
+                </a>
+
+                <button onclick="openAddPositionModal()"
+                        class="px-4 py-2 text-white transition rounded bg-emerald-600 hover:bg-emerald-700">
+                    + Add Position
+                </button>
+            </div>
+            @if (session('success'))
+                <div class="p-2 text-green-800 bg-green-200 rounded">{{ session('success') }}</div>
+            @endif
+
+            @if (session('error'))
+                <div class="p-2 text-red-800 bg-red-200 rounded">{{ session('error') }}</div>
+            @endif
+        </div>
         <!-- Table for Positions -->
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">

@@ -89,6 +89,9 @@ Route::controller(AdminDashboardController::class)->group(function () {
     //EXPORTS AND IMPORTS
     Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');
     Route::post('/admin/import-voters', 'importVoters')->name('admin.import.voters');
+    Route::get('/admin/export/candidates','exportCandidates')->name('admin.export.candidates');
+    Route::get('/admin/export/positions','exportPositions')->name('admin.export.positions');
+
 
     Route::get('/admin/rankings', 'showRankings')->name('admin.rankings');
 
