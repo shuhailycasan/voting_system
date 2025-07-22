@@ -46,7 +46,7 @@
             <div class="overflow-x-auto">
                 <table class="min-w-[700px] w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead
-                        class="text-xs text-gray-700 uppercase border border-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                        class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                     <tr class="text-center">
                         <th scope="col" class="px-6 py-3 w-40">Voter Codes</th>
                         <th scope="col" class="px-6 py-3 w-40">Has Voted?</th>
@@ -57,7 +57,7 @@
                     </thead>
                     <tbody class="text-center">
                     @forelse ($usersAll as $userAll)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <tr class="bg-white border-y dark:bg-gray-800 dark:border-gray-700">
                             <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $userAll->code }}</td>
                             <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                 @if ($userAll->voted)

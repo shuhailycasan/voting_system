@@ -50,7 +50,7 @@
                 <div class="inline-block min-w-full align-middle">
 
                     <table class="min-w-full text-sm text-left text-gray-500 table-auto dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-white dark:bg-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                         <tr class="text-center">
                             <th class="px-6 py-3">Photo</th>
                             <th class="px-6 py-3">Name</th>
@@ -61,7 +61,7 @@
                         <tbody class="text-center">
 
                         @forelse($candidatesAll as $candidate)
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <tr class="bg-white border-y dark:bg-gray-800 dark:border-gray-700">
                                 <td class="px-6 py-4">
                                     @if ($candidate->hasMedia('candidate_photo'))
                                         <button
@@ -160,6 +160,9 @@
             <div class="overflow-x-auto">
                 <div class="inline-block min-w-full align-middle">
                     <table class="min-w-full text-sm text-left text-gray-500 table-auto dark:text-gray-400">
+                        <caption class="caption-top">
+                            Table 1.2 Position names and the.
+                        </caption>
                         <thead class="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
                         <tr class="text-center bg-white">
                             <th class="px-6 py-3">Position Name</th>
@@ -171,7 +174,7 @@
                         </thead>
                         <tbody class="text-center">
                         @forelse($positionsAll as $positions)
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <tr class="bg-white border-y dark:bg-gray-800 dark:border-gray-700">
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     {{ $positions->name }}
                                 </td>

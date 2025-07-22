@@ -97,6 +97,9 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
 })->middleware('auth');
 
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
 
 Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs.index')->middleware('auth');
 
