@@ -3,17 +3,15 @@
 @section('content')
     <div class="min-h-screen p-4 sm:ml-64">
         <div class="container border-1 border-gray-200 bg-white side mb-4 rounded-xl p-3">
-            <div class="py-6 justify-between">
-                <div class="flex items-center space-x-2">
+                <div class="flex justify-between items-center py-2 space-x-2 ">
                     <h1 class="text-3xl font-semibold text-center text-gray-800 dark:text-white border-b-4 border-emerald-500 inline-block px-4 pb-2">
                         Rankings
                     </h1>
-                    <a href="{{ route('admin.export.voters') }}"
+                    <a href="{{ route('admin.export.rankings') }}"
                        class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">
                         Export Voters
                     </a>
                 </div>
-            </div>
 
             <div class="grid grid-cols-1  gap-6 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($groupedRankings as $position => $candidates)

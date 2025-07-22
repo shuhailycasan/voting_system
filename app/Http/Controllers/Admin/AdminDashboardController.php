@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\CandidatesExport;
 use App\Exports\PositionsExport;
+use App\Exports\RankingsExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VoterCodeImport;
@@ -280,6 +281,11 @@ class AdminDashboardController extends Controller
     public function exportPositions()
     {
         return Excel::download(new PositionsExport(), 'positions.xlsx');
+    }
+
+    public function exportRankings()
+    {
+        return Excel::download(new RankingsExport(), 'rankings.xlsx');
     }
 
 }

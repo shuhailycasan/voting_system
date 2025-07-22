@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-
 //VOTERS ROUTES
 Route::controller(VoteLoginController::class)->group(function () {
     Route::get('/', 'showLoginForm')->name('login.form');
@@ -46,7 +45,6 @@ Route::get('/already-voted', function () {
 })->name('already-voted');
 
 
-
 //ADMIN ROUTES
 Route::controller(AdminLoginController::class)->group(function () {
     Route::get('/admin/login', 'showLoginForm')->name('admin.login');
@@ -55,7 +53,6 @@ Route::controller(AdminLoginController::class)->group(function () {
 
 Route::get('/admin/dashboard', [AdminDashboardController::class, 'showDashboard'])
     ->middleware('auth')->name('admin.dashboard');
-
 
 
 // Admin Logout
@@ -69,33 +66,33 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+//Admin Panel Controller
 Route::controller(AdminDashboardController::class)->group(function () {
-
-
     Route::get('/admin/users-manage', 'ManageUsers')->name('admin.candidate.users');
 
     //CRUD FOR CANDIDATES
     Route::get('/admin/candidate-manage', 'ManageCandidates')->name('admin.candidate.table');
     Route::post('/admin/add-candidate', 'addCandidates')->name('admin.candidate.add');
-    Route::put('/admin/candidates/{id}',  'updateCandidate')->name('admin.candidate.update');
+    Route::put('/admin/candidates/{id}', 'updateCandidate')->name('admin.candidate.update');
     Route::delete('/admin/delete-candidate/{id}', 'deleteCandidates')->name('admin.candidate.delete');
 
     //CRUD FOR POSITIONS
     Route::post('/admin/add-position', 'addPositions')->name('admin.position.add');
     Route::get('/admin/users-position', 'ManagePosition')->name('admin.position');
-    Route::put('/admin/positions/{id}',  'updatePosition')->name('admin.position.update');
+    Route::put('/admin/positions/{id}', 'updatePosition')->name('admin.position.update');
     Route::delete('/admin/delete-position/{id}', 'deletePositions')->name('admin.position.delete');
 
     //EXPORTS AND IMPORTS
     Route::get('/admin/export-voters', 'exportUsers')->name('admin.export.voters');
     Route::post('/admin/import-voters', 'importVoters')->name('admin.import.voters');
-    Route::get('/admin/export/candidates','exportCandidates')->name('admin.export.candidates');
-    Route::get('/admin/export/positions','exportPositions')->name('admin.export.positions');
+    Route::get('/admin/export/candidates', 'exportCandidates')->name('admin.export.candidates');
+    Route::get('/admin/export/positions', 'exportPositions')->name('admin.export.positions');
+    Route::get('/admin/export/rankings', 'exportRankings')->name('admin.export.rankings');
 
     //Generates 6-code
     Route::post('/admin/generate-code', 'generateCode')->name('admin.users.generate-code');
-
-
+    //Rankings
     Route::get('/admin/rankings', 'showRankings')->name('admin.rankings');
 
 })->middleware('auth');
@@ -103,4 +100,4 @@ Route::controller(AdminDashboardController::class)->group(function () {
 
 Route::get('/admin/logs', [LogController::class, 'index'])->name('admin.logs.index')->middleware('auth');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
