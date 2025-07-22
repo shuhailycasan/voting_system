@@ -31,7 +31,8 @@
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
+                <label for="password"
+                       class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
                 <input type="password" name="password" id="password" autocomplete="current-password" required
                        class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
                 <div class="mt-2 text-right">
