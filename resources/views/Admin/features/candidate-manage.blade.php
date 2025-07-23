@@ -15,7 +15,7 @@
                 <!-- Search Form -->
                 <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex w-full lg:w-auto">
                     @csrf
-                    <input type="text" name="search" value="{{ request('search') }}"
+                    <input type="text" name="search_candidate" value="{{ request('search_candidate') }}"
                            placeholder="Search name or position..."
                            class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"/>
                     <button type="submit" class="px-4 text-white bg-emerald-600 rounded-r-md hover:bg-emerald-700">
@@ -128,7 +128,7 @@
                 <!-- Search Form -->
                 <form action="{{ route('admin.candidate.table') }}" method="GET" class="flex w-full lg:w-auto">
                     @csrf
-                    <input type="text" name="search" value="{{ request('search') }}"
+                    <input type="text" name="search_position" value="{{ request('search_position') }}"
                            placeholder="Search position name"
                            class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"/>
                     <button type="submit" class="px-4 text-white bg-emerald-600 rounded-r-md hover:bg-emerald-700">

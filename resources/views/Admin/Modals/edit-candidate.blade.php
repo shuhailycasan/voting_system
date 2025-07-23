@@ -23,7 +23,9 @@
                 <label for="edit_position" class="block mb-1 font-medium">Position Name</label>
                 <select name="position_id" id="edit_position" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white">
                     @foreach ($positionsAll as $position)
-                        <option value="{{ $position->id }}" {{ old('position_id', $candidate->position_id) == $position->id ? 'selected' : '' }} >{{ $position->name }}</option>
+                        <option value="{{ $position->id }}" {{ old('position_id', $position->id) == $position->id ? 'selected' : '' }} >
+                            {{ $position->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>

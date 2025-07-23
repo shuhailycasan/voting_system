@@ -21,6 +21,10 @@ class VoteController extends Controller
 
     public function submitVote(Request $request)
     {
+        $request->validate([
+            'email' => ['nullable', 'email'],
+        ]);
+
         $votes = $request->input('votes'); // this is an associative array like ['President' => 2]
 
         $user = Auth::user();
@@ -88,11 +92,4 @@ class VoteController extends Controller
         }
     }
 
-    public function storeEmail(Request $request)
-    {
-        $request->validate([
-            'email' => 'nullable|email',
-        ]);
-
-    }
 }

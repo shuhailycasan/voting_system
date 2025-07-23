@@ -44,14 +44,15 @@
                                     </div>
 
                                     {{-- Candidate Info --}}
-                                    <div>
+                                    <div class="flex items-center justify-between border border-emerald-400">
                                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
                                             {{ $candidate->name }}
                                         </h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                                            Votes: {{ $candidate->votes_count }}
+                                        <p class="text-3xl font-bold text-gray-600 dark:text-gray-300">
+                                            {{ $candidate->votes_count }} votes
                                         </p>
                                     </div>
+
                                 </li>
                             @empty
                                 <li class="text-sm text-center text-gray-400">No candidates</li>

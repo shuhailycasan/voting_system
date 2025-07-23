@@ -23,21 +23,27 @@ class AdminDashboardController extends Controller
 //    CRUD FOR CANDIDATES
     public function ManageCandidates(Request $request)
     {
-        $search = $request->input('search');
+        $searchCandidate = $request->input('search_candidate');
+        $searchPosition = $request->input('search_position');
 
-        $candidatesAll = Candidate::with('position')
-            ->where(function ($query) use ($search) {
-                $query
-                    ->whereHas('position', function ($q) use ($search) {
-                        $q->where('name', 'like', "%$search%");
-                    })
-                    ->orWhere('name', 'like', "%$search%");
+        $candidatesAll = Candidate::with(['media', 'position'])
+            ->when($searchCandidate, function ($query, $search) {
+                $query->where('name', 'like', "%$search%");
             })
             ->paginate(5, ['*'], 'candidates_page');
 
-        $positionsAll = Position::paginate(5, ['*'], 'positions_page');
 
-        return view('Admin.features.candidate-manage', compact('candidatesAll', 'search', 'positionsAll'));
+        $positionsAll = Position::when($searchPosition, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('max_votes', 'like', "%$search%")
+                    ->orWhere('type', 'like', "%$search%");
+            });
+        })
+            ->paginate(5, ['*'], 'positions_page');
+
+
+        return view('Admin.features.candidate-manage', compact('candidatesAll','searchCandidate','searchPosition', 'positionsAll'));
     }
 
     public function addCandidates(Request $request)
@@ -174,18 +180,20 @@ class AdminDashboardController extends Controller
 
 
         $usersAll = User::query()
+            ->with('media')
             ->when($search, function ($query, $search) {
                 $query->where('code', 'like', '%' . $search . '%')
                     ->orWhere('role', 'like', '%' . $search . '%');
             })
-            ->paginate(5,['*'],'voterspage');
+            ->paginate(5, ['*'], 'voterspage');
         return view('Admin.features.users-manage', compact('usersAll', 'search'));
     }
+
     public function generateCode()
     {
-        do{
-            $code = str_pad(rand(0,999999), 6, '0', STR_PAD_LEFT);
-        }while(User::where('code', $code)->exists());
+        do {
+            $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        } while (User::where('code', $code)->exists());
 
         $user = User::create([
             'code' => $code,
@@ -197,11 +205,10 @@ class AdminDashboardController extends Controller
     }
 
 
-
     //DASHBOARD
     public function showDashboard()
     {
-        $candidates = Candidate::withCount('votes')->get();
+        $candidates = Candidate::withCount('votes')->with('position')->get();
 
         $labels = $candidates->pluck('name');
         $data = $candidates->pluck('candidate_id');
@@ -211,7 +218,13 @@ class AdminDashboardController extends Controller
         $votedCount = User::where('role', 'voter')->where('voted', true)->count();
 
         //TIME
-        $votesByHour = User::whereNotNull('voted_at')->get()->groupBy(fn($user) => Carbon::parse($user->voted_at)->format('H:00'))->map(fn($group) => $group->count())->sortKeys();
+        $votesByHour = User::selectRaw("DATE_FORMAT(voted_at, '%H:00') as hour, COUNT(*) as count")
+            ->whereNotNull('voted_at')
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->pluck('count', 'hour');
+
+//        $votesByHour = User::whereNotNull('voted_at')->get()->groupBy(fn($user) => Carbon::parse($user->voted_at)->format('H:00'))->map(fn($group) => $group->count())->sortKeys();
 
         //Total Candidates
         $totalCandidates = Candidate::count();
@@ -230,15 +243,17 @@ class AdminDashboardController extends Controller
         $positions = Position::orderBy('order')->get();
 
         // Preload candidates for each position, sorted by votes
-        $groupedRankings = $positions->mapWithKeys(function ($position) {
-            $candidates = $position->candidates()->withCount('votes')->orderByDesc('votes_count')->get();
+        $candidates = Candidate::with(['media', 'position'])
+            ->withCount('votes')
+            ->whereNotNull('position_id')
+            ->get();
 
-            return [$position->name => $candidates];
-        });
+        $groupedRankings = $candidates
+            ->groupBy(fn($candidates) => $candidates->position->name ?? 'No position')
+            ->map(fn($group) => $group->sortByDesc('votes_count')->values());
 
         return view('Admin.features.rankings', compact('groupedRankings'));
     }
-
 
 
     //PUBLIC FUNCTION FOR EXPORTING AND IMPORTING
