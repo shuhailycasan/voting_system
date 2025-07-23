@@ -90,14 +90,9 @@ class VoteController extends Controller
 
     public function storeEmail(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'email' => 'nullable|email',
         ]);
 
-        if ($validated['email']) {
-            Bus::batch([
-                new SendVoteConfirmation($validated['email'])
-            ])->dispatch();
-        }
     }
 }

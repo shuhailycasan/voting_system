@@ -33,8 +33,8 @@
     <div class="w-full max-w-4xl space-y-8">
 
         <form id="voteForm" action="{{ route('vote.submit') }}" method="POST">
-
             @csrf
+
             <input type="email" name="email" id="voterEmail" placeholder="Enter email (optional)"
                    class="hidden">
             @foreach ($positions as $position)
@@ -88,6 +88,7 @@
 
                 <small class="text-sm text-gray-600">Optional — we’ll send a thank you email.</small>
                 <input type="email" id="modalEmail" placeholder="Enter email (optional)"
+                       pattern="[^@\s]+@[^@\s]+\.[^@\s]+"  autocomplete="email" inputmode="email"
                        class="input-class my-1 p-1 border border-emerald-700">
 
 
@@ -109,6 +110,7 @@
 </body>
 
 </html>
+
 <script>
     function syncEmail() {
         document.getElementById('voterEmail').value = document.getElementById('modalEmail').value;

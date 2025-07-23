@@ -31,7 +31,8 @@ class User extends Authenticatable implements HasMedia
 
         'code',
         'role',
-        'voted'
+        'voted',
+        'email'
     ];
 
     /**
@@ -44,7 +45,7 @@ class User extends Authenticatable implements HasMedia
         'remember_token',
     ];
 
-    protected static $logAttributes = ['name', 'role', 'code', 'voted'];
+    protected static $logAttributes = ['name', 'role', 'code', 'voted','email'];
     protected static $logName = 'user';
     protected static $logOnlyDirty = true;
     protected static $submitEmptyLogs = false;
