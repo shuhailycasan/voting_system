@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendThankYouEmail;
 use App\Models\Candidate;
 use App\Models\Position;
 use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
 
 class VoteController extends Controller
 {
@@ -49,6 +51,10 @@ class VoteController extends Controller
             }
         }
 
+        if ($request->filled('email')) {
+           dispatch(new SendThankYouEmail($request->email));
+        }
+
         return redirect()->route('vote.photo');
 
     }
@@ -79,6 +85,19 @@ class VoteController extends Controller
         } catch (\Exception $e) {
             Log::error('Photo upload failed: ' . $e->getMessage());
             return response()->json(['error' => 'Upload failed'], 500);
+        }
+    }
+
+    public function storeEmail(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'nullable|email',
+        ]);
+
+        if ($validated['email']) {
+            Bus::batch([
+                new SendVoteConfirmation($validated['email'])
+            ])->dispatch();
         }
     }
 }
