@@ -206,7 +206,7 @@
 
         votes.forEach(input => {
             const positionName = input.dataset.positionName;
-            if (!positionName) return; // 💥 skip anything without a proper name
+            if (!positionName) return;
 
             if (!grouped[positionName]) grouped[positionName] = [];
 
