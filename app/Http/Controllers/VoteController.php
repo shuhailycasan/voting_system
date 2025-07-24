@@ -16,6 +16,7 @@ class VoteController extends Controller
     {
        
         $positions = Position::with(['candidates.media'])->get();
+        
         return view('vote.vote', compact('positions'));
     }
 
