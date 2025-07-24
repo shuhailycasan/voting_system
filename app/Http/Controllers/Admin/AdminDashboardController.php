@@ -74,8 +74,6 @@ class AdminDashboardController extends Controller
 
     public function updateCandidate(Request $request, $id)
     {
-        \Log::info('UpdateCandidate hit', $request->all());
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'position_id' => 'required|integer|exists:positions,id',
