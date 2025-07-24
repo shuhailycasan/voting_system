@@ -40,7 +40,7 @@
             @foreach ($positions as $position)
                 <div class="mb-6">
                     <h2 class="mb-2 text-xl font-bold text-gray-800 dark:text-white">{{ $position->name }}</h2>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 data-max-votes="{{ $position->max_votes }}">
                         @foreach ($position->candidates as $candidate)
                             <label for="candidate_{{ $candidate->id }}">
                                 <div
@@ -57,7 +57,7 @@
                                         name="votes[{{ $position->id }}]{{ $position->type == 'multiple' ? '[]' : '' }}"
                                         id="candidate_{{ $candidate->id }}"
                                         value="{{ $candidate->id }}"
-                                        class="hidden"
+                                        class="hidden position-{{ $position->id }}"
                                         data-position-name="{{ $position->name }}"
                                     >
                                 </div>
@@ -89,7 +89,7 @@
                 <small class="text-sm text-gray-600">Optional — we’ll send a thank you email.</small>
                 <input type="email" id="modalEmail" placeholder="Enter email (optional)"
                        pattern="[^@\s]+@[^@\s]+\.[^@\s]+"  autocomplete="email" inputmode="email"
-                       class="input-class my-1 p-1 border border-emerald-700">
+                       class="p-1 my-1 border input-class border-emerald-700">
 
 
                 <div class="flex justify-end space-x-2">
@@ -121,45 +121,71 @@
 {{-- Handle selection --}}
 <script>
     function selectCandidate(el, positionId, type) {
-        const container = el.closest('.grid');
-        if (type === 'single') {
-            // Unselect others
-            container.querySelectorAll('.candidate-box').forEach(box => {
-                box.classList.remove('selected');
-                box.querySelector('input').checked = false;
-            });
+    const container = el.closest('.grid');
+    const input = el.querySelector('input');
+
+    if (type === 'single') {
+        // Unselect all others first
+        container.querySelectorAll('.candidate-box').forEach(box => {
+            box.classList.remove('selected');
+            box.querySelector('input').checked = false;
+        });
+
+        input.checked = true;
+        el.classList.add('selected');
+    } else {
+        // MULTIPLE
+        input.checked = !input.checked;
+
+        // Get all checkboxes for this position
+        const allCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = [...allCheckboxes].filter(cb => cb.checked).length;
+
+        const maxVotes = parseInt(input.closest('div[data-max-votes]')?.dataset?.maxVotes || 999);
+
+        if (checkedCount > maxVotes) {
+            input.checked = false;
+            alert(`You can only select up to ${maxVotes} candidate(s).`);
+            return;
         }
 
-        const input = el.querySelector('input');
-        input.checked = !input.checked;
         el.classList.toggle('selected', input.checked);
     }
+}
+
 </script>
 
 
 {{-- Vote Limit Script --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        @foreach ($positions as $position)
-        @if ($position->type === 'multiple')
-        const checkboxes{{ $position->id }} = document.querySelectorAll(
-            '.position-{{ $position->id }}');
-        const max{{ $position->id }} = {{ $position->max_votes }};
+    @foreach ($positions as $position)
+    @if ($position->type === 'multiple')
+    const checkboxes{{ $position->id }} = document.querySelectorAll(
+        '.position-{{ $position->id }}'
+    );
+    const max{{ $position->id }} = {{ $position->max_votes }};
 
-        checkboxes{{ $position->id }}.forEach(box => {
-            box.addEventListener('change', () => {
-                let checked = [...checkboxes{{ $position->id }}].filter(c => c
-                    .checked);
-                if (checked.length > max{{ $position->id }}) {
-                    box.checked = false;
-                    alert(
-                        'You can only select up to {{ $position->max_votes }} candidate(s) for {{ $position->name }}');
-                }
-            });
+    checkboxes{{ $position->id }}.forEach(box => {
+        box.addEventListener('change', () => {
+            let checked = [...checkboxes{{ $position->id }}].filter(c => c.checked);
+            if (checked.length > max{{ $position->id }}) {
+                box.checked = false;
+                
+                // 🧠 Remove highlight
+                const boxWrapper = box.closest('.candidate-box');
+                if (boxWrapper) boxWrapper.classList.remove('selected');
+
+                alert(
+                    'You can only select up to {{ $position->max_votes }} candidate(s) for {{ $position->name }}'
+                );
+            }
         });
-        @endif
-        @endforeach
     });
+    @endif
+    @endforeach
+});
+
 </script>
 
 <script>

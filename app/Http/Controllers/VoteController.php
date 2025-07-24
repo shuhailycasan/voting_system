@@ -14,9 +14,10 @@ class VoteController extends Controller
 {
     public function showVotePage()
     {
-        $candidates = Candidate::all();
-        $positions = Position::all();
-        return view('vote.vote', compact('candidates','positions'));
+       
+        $positions = Position::with(['candidates.media'])->get();
+        
+        return view('vote.vote', compact('positions'));
     }
 
     public function submitVote(Request $request)
