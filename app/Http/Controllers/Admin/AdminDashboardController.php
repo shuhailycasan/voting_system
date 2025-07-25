@@ -101,8 +101,8 @@ class AdminDashboardController extends Controller
 
         // Log the delete activity BEFORE deleting
         activity()
-            ->causedBy(auth()->user()) // who did it
-            ->performedOn($delCandidate) // what was affected
+            ->causedBy(auth()->user()) 
+            ->performedOn($delCandidate)
             ->withProperties(['candidate_name' => $delCandidate->name, 'position' => $delCandidate->position])
             ->log("Deleted candidate {$delCandidate->name}");
 
