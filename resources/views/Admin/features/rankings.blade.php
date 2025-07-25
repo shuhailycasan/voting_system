@@ -32,8 +32,8 @@
                                     {{-- Profile Picture --}}
                                     <div class="flex-shrink-0">
                                         @if ($candidate->hasMedia('candidate_photo'))
-                                            <img src="{{ $candidate->getFirstMediaUrl('candidate_photo') }}"
-                                                 alt="{{ $candidate->name }}"
+                                            <img src="{{ $candidate->getFirstMediaUrl('candidate_photo')}}"
+                                                 alt="{{ $candidate->name}}"
                                                  class="object-cover w-12 h-12 border-2 border-white rounded-full shadow"/>
                                         @else
                                             <div
@@ -44,12 +44,12 @@
                                     </div>
 
                                     {{-- Candidate Info --}}
-                                    <div class="flex items-center justify-between border border-emerald-400">
+                                    <div class="flex items-center justify-between w-full">
                                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                                            {{ $candidate->name }}
+                                            {{ $candidate->name  ??  'No Name' }}
                                         </h3>
                                         <p class="text-3xl font-bold text-gray-600 dark:text-gray-300">
-                                            {{ $candidate->votes_count }} votes
+                                            {{ $candidate->votes_count ?? 'No Votes' }} votes
                                         </p>
                                     </div>
 
