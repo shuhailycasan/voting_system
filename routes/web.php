@@ -20,7 +20,7 @@ Route::controller(VoteLoginController::class)->group(function () {
 Route::controller(VoteController::class)->middleware('auth')->group(function () {
     Route::get('/vote', 'showVotePage')->name('vote.page');
     Route::post('/vote-submit', 'submitVote')->name('vote.submit');
-
+    Route::post('/vote/photo', 'storePhoto')->name('vote.photo.upload');
 });
 
 //voters taking picture after voting
@@ -32,7 +32,7 @@ Route::get('/vote/photo', function () {
     return view('web-cam');
 })->name('vote.photo');
 
-Route::post('/vote/photo', [VoteController::class, 'storePhoto'])->name('vote.photo.upload');
+
 
 //Thank you page
 Route::get('/thank-you', function () {
