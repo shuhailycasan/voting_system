@@ -14,6 +14,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
 
@@ -133,7 +134,7 @@ class AdminDashboardController extends Controller
 
     public function updatePosition(Request $request, $id)
     {
-        \Log::info('updatePosition hit', $request->all());
+        Log::info('updatePosition hit', $request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
